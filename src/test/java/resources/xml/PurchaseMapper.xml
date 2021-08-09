@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.apache.ibatis.z_run.mapper.PurchaseMapper">
+    <!-- 开启二级缓存-->
+<!--    <cache type="org.apache.ibatis.cache.impl.PerpetualCache"
+           size="1024"
+           eviction="LRU"
+           flushInterval="120000"
+           readOnly="true"/>-->
+
+
+    <select id="findByCondition" parameterType="org.apache.ibatis.z_run.pojo.QueryCondition" resultType="org.apache.ibatis.z_run.pojo.Purchase">
+        select * from purchase
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="categoryList != null and categoryList.size > 0">
+                <foreach collection="categoryList" open="and category in (" close=")" item="category" separator=",">
+                    ${category}
+                </foreach>
+            </if>
+            <if test="category != null">
+                and category = #{category,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+</mapper>
