@@ -39,7 +39,7 @@ public class XMLLanguageDriver implements LanguageDriver {
     }
 
     /**
-     * SqlSource对象主要由XMLScriptBuild er的parseScriptNode方法生成
+     * SqlSource对象主要由XMLScriptBuilder的parseScriptNode方法生成
      * @param configuration 配置信息
      * @param script 映射文件中的数据库操作节点
      * @param parameterType 参数类型

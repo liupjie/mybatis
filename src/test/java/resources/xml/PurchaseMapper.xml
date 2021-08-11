@@ -38,7 +38,7 @@
         <result column="category" jdbcType="INTEGER" property="category" />
     </resultMap>
 
-    <insert id="insertXmlPojo" parameterType="org.apache.ibatis.z_run.pojo.Purchase">
+    <insert id="insertXmlPojo" parameterType="org.apache.ibatis.z_run.pojo.Purchase" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
         insert into purchase
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -160,8 +160,8 @@
         select
         <include refid="Base_Column_List" />
         from purchase
-        where price = #{price,jdbcType=INTEGER}
-        and category = #{category,jdbcType=INTEGER}
+        where price = #{arg0,jdbcType=INTEGER}
+        and category = #{arg1,jdbcType=INTEGER}
     </select>
 
 </mapper>

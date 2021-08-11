@@ -6,7 +6,7 @@ import java.util.Objects;
  * @author MySQ
  * @date 2021/8/9 22:20
  */
-public class Purchase {
+public class PurchaseVO {
 
     /**
      * ID
@@ -23,7 +23,7 @@ public class Purchase {
     /**
      * 分类
      */
-    private Integer category;
+    private Category category;
 
     public Integer getId() {
         return id;
@@ -49,11 +49,11 @@ public class Purchase {
         this.price = price;
     }
 
-    public Integer getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(Integer category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 
@@ -63,7 +63,7 @@ public class Purchase {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        Purchase purchase = (Purchase) o;
+        PurchaseVO purchase = (PurchaseVO) o;
         return Objects.equals(id, purchase.id) &&
                 Objects.equals(name, purchase.name) &&
                 Objects.equals(price, purchase.price) &&
@@ -85,10 +85,10 @@ public class Purchase {
                 '}';
     }
 
-    public Purchase() {
+    public PurchaseVO() {
     }
 
-    public Purchase(Integer id, String name) {
+    public PurchaseVO(Integer id, String name) {
         this.id = id;
         this.name = name;
     }

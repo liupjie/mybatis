@@ -10,6 +10,7 @@ import org.apache.ibatis.z_run.mapper.CommonMapper;
 import org.apache.ibatis.z_run.mapper.PurchaseMapper;
 import org.apache.ibatis.z_run.pojo.Purchase;
 import org.apache.ibatis.z_run.pojo.QueryCondition;
+import org.apache.ibatis.z_run.util.PurchaseResultHandler;
 import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -90,30 +91,34 @@ public class MyTest extends BaseDataTest {
     public void insert() {
         PurchaseMapper mapper = sqlSession.getMapper(PurchaseMapper.class);
         //组装参数
-        // Purchase purchase = new Purchase();
-        // purchase.setName("火腿");
-        // purchase.setPrice(3);
-        // purchase.setCategory(1);
-        // mapper.insertXmlPojo(purchase);
-        Map<String, Object> param = new HashMap<>();
-        param.put("name", "辣条");
-        param.put("price", "1");
-        param.put("category", "2");
-        mapper.insertMapPojo(param);
+        Purchase purchase = new Purchase();
+        purchase.setName("西瓜");
+        purchase.setPrice(12);
+        purchase.setCategory(3);
+        mapper.insertAnnoPojo(purchase);
+        System.out.println(purchase);
+        // Map<String, Object> param = new HashMap<>();
+        // param.put("name", "辣条");
+        // param.put("price", "1");
+        // param.put("category", "2");
+        // mapper.insertMapPojo(param);
     }
 
     @Test
     public void query() {
         PurchaseMapper mapper = sqlSession.getMapper(PurchaseMapper.class);
         //组装参数
-        // Purchase purchase = new Purchase();
-        // purchase.setId(6);
+        Purchase purchase = new Purchase();
+        purchase.setId(12);
         // System.out.println(mapper.findXmlPojoByID(purchase));
 
         // Map<String, Object> param = new HashMap<>();
         // param.put("id", 7);
 
-        System.out.println(mapper.findByPriceAndCategory(3,1));
+        System.out.println(mapper.findCategoryByID(1));
+        // PurchaseResultHandler resultHandler = new PurchaseResultHandler();
+        // mapper.findAnnoById(resultHandler, null);
+        // System.out.println(resultHandler.getPurchases());
     }
 
     @Test
@@ -129,7 +134,7 @@ public class MyTest extends BaseDataTest {
         Map<String, Object> param = new HashMap<>();
         param.put("id", 7);
         param.put("price", "3");
-        mapper.updateMapPojoByID(param);
+        mapper.updateAnnoById(12, 10);
     }
 
     @Test
@@ -141,7 +146,7 @@ public class MyTest extends BaseDataTest {
         // mapper.deleteXmlPojoByID(purchase);
         Map<String, Object> param = new HashMap<>();
         param.put("id", 7);
-        mapper.deleteMapPojoByID(param);
+        System.out.println(mapper.deleteAnnoById(12));
     }
 
 

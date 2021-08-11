@@ -1,9 +1,9 @@
 package org.apache.ibatis.z_run.mapper;
 
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.z_run.pojo.Purchase;
-import org.apache.ibatis.z_run.pojo.QueryCondition;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.z_run.pojo.*;
+import org.apache.ibatis.z_run.util.PurchaseResultHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -65,6 +65,69 @@ public interface PurchaseMapper {
      */
     int deleteMapPojoByID(Map<String, Object> purchase);
 
-    List<Purchase> findByPriceAndCategory(@Param("price") Integer price, @Param("category") Integer category);
+    List<Purchase> findByPriceAndCategory(Integer price, Integer category);
+
+    //Insert注解传入的参数是字符串数组，因此可以将SQL语句分解成字符串数组，也可以拼成一个字符串
+    // @Insert("insert into purchase (id, name, price, category) values(#{id},#{name},#{price},#{category})")
+    @Insert({"insert", "into purchase", " (id, name, price, category)", " values(#{id},#{name},#{price},#{category})"})
+    //Options注解用于插入数据后返回数据的自增ID
+    @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
+    int insertAnnoPojo(Purchase purchase);
+
+    @Select("select id,name from purchase where id = #{id}")
+    // @ConstructorArgs({
+    //         @Arg(column = "id", javaType = Integer.class, id = true),
+    //         @Arg(column = "name", javaType = String.class)
+    // })
+    @Results(id = "purchaseMap", value = {
+            @Result(property = "id", column = "id", javaType = Integer.class, jdbcType = JdbcType.INTEGER, id = true),
+            @Result(property = "name", column = "name", javaType = String.class, jdbcType = JdbcType.VARCHAR)
+    })
+    Purchase findAnnoPojo(Purchase purchase);
+
+    @Select("select id,name from purchase where id = #{id}")
+    @ResultType(Purchase.class)
+    void findAnnoById(PurchaseResultHandler resultHandler, @Param("id") Integer id);
+
+    @UpdateProvider(type = SqlProvider.class, method = "provideUpdate")
+    int updateAnnoById(@Param("id") Integer id, @Param("price") Integer price);
+
+    class SqlProvider {
+        public String provideUpdate(@Param("id") Integer id, @Param("price") Integer price) {
+            StringBuilder sql = new StringBuilder();
+            if (id != null) {
+                sql.append("update purchase ");
+                if (price != null) {
+                    sql.append("set price = #{price}");
+                }
+                sql.append(" where id = #{id}");
+            }
+            return sql.toString();
+        }
+    }
+
+    @Delete("delete from purchase where id = #{id}")
+    int deleteAnnoById(Integer id);
+
+    @Select("select * from purchase where id = #{id}")
+    @Results(id = "purchaseVoMapper", value = {
+            @Result(property = "category", column = "category", one = @One(select = "org.apache.ibatis.z_run.mapper.PurchaseMapper.findCategoryById"))
+    })
+    PurchaseVO findPurchaseById(Integer id);
+
+    @Select("select * from category where id = #{id}")
+    Category findCategoryById(Integer id);
+
+
+    // 这里必须要写id的映射关系，否则id值为null TODO
+    @Select("select * from category where id = #{id}")
+    @Results(id = "categoryVoMapper", value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "purchases", column = "id", many = @Many(select = "org.apache.ibatis.z_run.mapper.PurchaseMapper.findPurchaseByCategory"))
+    })
+    CategoryVO findCategoryByID(Integer id);
+
+    @Select("select * from purchase where category = #{category}")
+    Purchase findPurchaseByCategory(Integer category);
 
 }
