@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.z_run.mapper.CommonMapper;
 import org.apache.ibatis.z_run.mapper.PurchaseMapper;
+import org.apache.ibatis.z_run.pojo.CategoryVO;
 import org.apache.ibatis.z_run.pojo.Purchase;
 import org.apache.ibatis.z_run.pojo.QueryCondition;
 import org.apache.ibatis.z_run.util.PurchaseResultHandler;
@@ -148,6 +149,50 @@ public class MyTest extends BaseDataTest {
         param.put("id", 7);
         System.out.println(mapper.deleteAnnoById(12));
     }
+
+
+    @Test
+    public void oneLevelCache() {
+        // 使用同一个SqlSession进行操作
+        PurchaseMapper mapper = sqlSession.getMapper(PurchaseMapper.class);
+        System.out.println("======第一次查询======");
+        System.out.println(mapper.findByID(2));
+
+        System.out.println("======第二次查询======");
+        System.out.println(mapper.findByID(2));
+    }
+
+    @Test
+    public void twoLevelCache() {
+        // 获取SqlSessionFactory
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        // 第一个SqlSession下的查询
+        SqlSession sqlSession = getSqlSession(sqlSessionFactory);
+        PurchaseMapper mapper = sqlSession.getMapper(PurchaseMapper.class);
+        System.out.println("============第一个SqlSession下的第一次查询============");
+        System.out.println(mapper.findByID(2));
+        System.out.println("============第一个SqlSession下的第二次查询============");
+        System.out.println(mapper.findByID(2));
+        // 刷新缓存到SqlSessionFactory中
+        sqlSession.commit();
+        sqlSession.close();
+        // 第二个SqlSession下的查询
+        System.out.println("============第二个SqlSessionFactory下的第一次查询============");
+        sqlSession = getSqlSession(sqlSessionFactory);
+        mapper = sqlSession.getMapper(PurchaseMapper.class);
+        System.out.println(mapper.findByID(2));
+    }
+
+    @Test
+    public void lazyLoadTest() {
+        PurchaseMapper mapper = sqlSession.getMapper(PurchaseMapper.class);
+        CategoryVO categoryVO = mapper.findCategoryById(1);
+        System.out.println("==========使用purchases属性==========");
+        categoryVO.getPurchases();
+        System.out.println(categoryVO);
+    }
+
+
 
 
     public SqlSessionFactory getSqlSessionFactory() {

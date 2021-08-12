@@ -109,14 +109,14 @@ public interface PurchaseMapper {
     @Delete("delete from purchase where id = #{id}")
     int deleteAnnoById(Integer id);
 
-    @Select("select * from purchase where id = #{id}")
-    @Results(id = "purchaseVoMapper", value = {
-            @Result(property = "category", column = "category", one = @One(select = "org.apache.ibatis.z_run.mapper.PurchaseMapper.findCategoryById"))
-    })
-    PurchaseVO findPurchaseById(Integer id);
-
-    @Select("select * from category where id = #{id}")
-    Category findCategoryById(Integer id);
+    // @Select("select * from purchase where id = #{id}")
+    // @Results(id = "purchaseVoMapper", value = {
+    //         @Result(property = "category", column = "category", one = @One(select = "org.apache.ibatis.z_run.mapper.PurchaseMapper.findCategoryById"))
+    // })
+    // PurchaseVO findPurchaseById(Integer id);
+    //
+    // @Select("select * from category where id = #{id}")
+    // Category findCategoryById(Integer id);
 
 
     // 这里必须要写id的映射关系，否则id值为null TODO
@@ -130,4 +130,18 @@ public interface PurchaseMapper {
     @Select("select * from purchase where category = #{category}")
     Purchase findPurchaseByCategory(Integer category);
 
+
+    Purchase findPurchaseByCategoryId(Integer category);
+
+    /**
+     * 根据ID查询商品
+     */
+    Purchase findByID(Integer id);
+
+    PurchaseVO findPurchaseById(Integer id);
+
+    /**
+     * 根据ID查询商品分类
+     */
+    CategoryVO findCategoryById(Integer id);
 }

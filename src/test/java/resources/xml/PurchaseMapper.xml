@@ -164,4 +164,57 @@
         and category = #{arg1,jdbcType=INTEGER}
     </select>
 
+    <!-- 开启二级缓存-->
+    <cache type="org.apache.ibatis.cache.impl.PerpetualCache"
+           size="1024"
+           eviction="LRU"
+           flushInterval="120000"
+           readOnly="true"/>
+
+    <select id="findByID" parameterType="java.lang.Integer" resultMap="BaseResultMap" flushCache="false">
+        select
+        <include refid="Base_Column_List" />
+        from purchase
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
+
+    <resultMap id="PurchaseNestedResultMap" type="org.apache.ibatis.z_run.pojo.Purchase">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="price" jdbcType="INTEGER" property="price" />
+        <result column="category" jdbcType="INTEGER" property="category" />
+    </resultMap>
+
+    <select id="findPurchaseById" parameterType="java.lang.Integer" resultMap="PurchaseNestedResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from purchase
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
+    <resultMap id="CategoryNestedResultMap" type="org.apache.ibatis.z_run.pojo.CategoryVO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <collection column="id" property="purchases" select="findPurchaseByCategoryId" fetchType="lazy"/>
+    </resultMap>
+
+    <select id="findCategoryById" parameterType="java.lang.Integer" resultMap="CategoryNestedResultMap">
+        select
+        id,name
+        from category
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="findPurchaseByCategoryId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from purchase
+        where category = #{category,jdbcType=INTEGER}
+    </select>
+
+
+
 </mapper>
