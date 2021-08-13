@@ -207,6 +207,15 @@ public class MyTest extends BaseDataTest {
         System.out.println(purchase1);
     }
 
+    @Test
+    public void dynamicSQL() {
+        PurchaseMapper mapper = sqlSession.getMapper(PurchaseMapper.class);
+        QueryCondition condition = new QueryCondition();
+        condition.setId(1);
+        condition.setCategory(1);
+        System.out.println(mapper.findByCondition(condition));
+    }
+
 
 
 

@@ -10,18 +10,15 @@
 
 
     <select id="findByCondition" parameterType="org.apache.ibatis.z_run.pojo.QueryCondition" resultType="org.apache.ibatis.z_run.pojo.Purchase">
-        select * from purchase
+        select
+        <include refid="Base_Column_List" />
+        from purchase
         <where>
             <if test="id != null">
-                and id = #{id,jdbcType=INTEGER}
-            </if>
-            <if test="categoryList != null and categoryList.size > 0">
-                <foreach collection="categoryList" open="and category in (" close=")" item="category" separator=",">
-                    ${category}
-                </foreach>
+                And id = #{id,jdbcType=INTEGER}
             </if>
             <if test="category != null">
-                and category = #{category,jdbcType=INTEGER}
+                And category = #{category,jdbcType=INTEGER}
             </if>
         </where>
     </select>
@@ -40,7 +37,7 @@
 
     <insert id="insertXmlPojo" parameterType="org.apache.ibatis.z_run.pojo.Purchase" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
         insert into purchase
-        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <trim prefix="(" suffix=")" suffixOverrides="," prefixOverrides="AND | OR">
             <if test="id != null">
                 id,
             </if>
@@ -54,7 +51,7 @@
                 category,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <trim prefix="values (" suffix=")" suffixOverrides="," prefixOverrides="AND | OR">
             <if test="id != null">
                 #{id,jdbcType=INTEGER},
             </if>
