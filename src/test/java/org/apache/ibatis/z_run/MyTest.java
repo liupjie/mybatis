@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -190,6 +191,20 @@ public class MyTest extends BaseDataTest {
         System.out.println("==========使用purchases属性==========");
         categoryVO.getPurchases();
         System.out.println(categoryVO);
+    }
+
+    @Test
+    @Transactional
+    public void oneLevelQuestion() {
+        PurchaseMapper mapper = sqlSession.getMapper(PurchaseMapper.class);
+        System.out.println("=========第一次查询并使用=======");
+        Purchase purchase = mapper.findByID(2);
+        System.out.println(purchase);
+        //对缓存的数据进行修改
+        purchase.setPrice(null);
+        System.out.println("=========第二次查询并使用=======");
+        Purchase purchase1 = mapper.findByID(2);
+        System.out.println(purchase1);
     }
 
 
