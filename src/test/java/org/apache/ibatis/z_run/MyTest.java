@@ -9,13 +9,11 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.ibatis.z_run.mapper.CommonMapper;
 import org.apache.ibatis.z_run.mapper.PurchaseMapper;
 import org.apache.ibatis.z_run.pojo.CategoryVO;
 import org.apache.ibatis.z_run.pojo.PageVO;
 import org.apache.ibatis.z_run.pojo.Purchase;
 import org.apache.ibatis.z_run.pojo.QueryCondition;
-import org.apache.ibatis.z_run.util.PurchaseResultHandler;
 import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -89,7 +87,7 @@ public class MyTest extends BaseDataTest {
             list.add(3);
             queryCondition.setCategoryList(list);
             //执行查询
-            // System.out.println(mapper.findByCondition(queryCondition));
+            System.out.println(mapper.findByCondition(queryCondition));
         }
     }
 
