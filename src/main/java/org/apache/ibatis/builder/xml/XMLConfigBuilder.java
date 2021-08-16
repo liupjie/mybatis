@@ -408,15 +408,21 @@ public class XMLConfigBuilder extends BaseBuilder {
         if (parent != null) {
             for (XNode child : parent.getChildren()) {
                 if ("package".equals(child.getName())) {
+                    // 根据配置的包名扫描，获取TypeHandler接口所有的实现类，并将这些类型转换器进行注册
                     String typeHandlerPackage = child.getStringAttribute("name");
                     typeHandlerRegistry.register(typeHandlerPackage);
                 } else {
+                    // 解析typeHandler标签属性
                     String javaTypeName = child.getStringAttribute("javaType");
                     String jdbcTypeName = child.getStringAttribute("jdbcType");
                     String handlerTypeName = child.getStringAttribute("handler");
                     Class<?> javaTypeClass = resolveClass(javaTypeName);
                     JdbcType jdbcType = resolveJdbcType(jdbcTypeName);
                     Class<?> typeHandlerClass = resolveClass(handlerTypeName);
+                    /**
+                     * 注册类型转换器到Map<Type, Map<JdbcType, TypeHandler<?>>>容器中
+                     * 容器中将JavaType，JdbcType，TypeHandler进行映射
+                     */
                     if (javaTypeClass != null) {
                         if (jdbcType == null) {
                             typeHandlerRegistry.register(javaTypeClass, typeHandlerClass);
