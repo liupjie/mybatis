@@ -137,9 +137,13 @@ public class MapperAnnotationBuilder {
             // 设置命名空间
             assistant.setCurrentNamespace(type.getName());
             // 处理缓存
+            // 解析CacheNamespace注解
             parseCache();
+            // 解析CacheNamespaceRef注解
             parseCacheRef();
+            // 获取接口中的所有方法
             Method[] methods = type.getMethods();
+            // 遍历解析
             for (Method method : methods) {
                 try {
                     // 排除桥接方法，桥接方法是为了匹配泛型的类型擦除而由编译器自动引入的，并非用户编写的方法，因此要排除掉。
