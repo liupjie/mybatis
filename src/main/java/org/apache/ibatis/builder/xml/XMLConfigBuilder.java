@@ -440,8 +440,8 @@ public class XMLConfigBuilder extends BaseBuilder {
     /**
      * 解析mappers节点，例如：
      * <mappers>
-     *    <mapper resource="com/github/yeecode/mybatisDemo/UserDao.xml"/>
-     *    <package name="com.github.yeecode.mybatisDemo" />
+     *    <mapper resource="resources/xml/PurchaseMapper.xml"/>
+     *    <package name="org.apache.ibatis.z_run.mapper"/>
      * </mappers>
      * @param parent mappers节点
      * @throws Exception
@@ -453,7 +453,7 @@ public class XMLConfigBuilder extends BaseBuilder {
                 if ("package".equals(child.getName())) { // package节点
                     // 取出包路径
                     String mapperPackage = child.getStringAttribute("name");
-                    // 全部加入Mappers中
+                    // 获取包下所有的Mapper接口，解析对应的XML，全部加入Mappers中
                     configuration.addMappers(mapperPackage);
                 } else {
                     // resource、url、class这三个属性只有一个生效
@@ -475,7 +475,7 @@ public class XMLConfigBuilder extends BaseBuilder {
                         XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
                         mapperParser.parse();
                     } else if (resource == null && url == null && mapperClass != null) {
-                        // 配置的不是映射文件，而是映射接口
+                        // 加载配置的映射接口，获取对应的XML，加入到Mappers中
                         Class<?> mapperInterface = Resources.classForName(mapperClass);
                         configuration.addMapper(mapperInterface);
                     } else {

@@ -825,6 +825,10 @@ public class Configuration {
     }
 
     public void addMappers(String packageName) {
+        /**
+         * 这个mapperRegistry是在Configuration对象中创建的，创建时将当前Configuration对象传进去了
+         * 因此后续步骤的操作，都是操作的同一个Configuration对象，也就是当前对象
+         */
         mapperRegistry.addMappers(packageName);
     }
 

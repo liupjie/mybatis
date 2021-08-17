@@ -182,9 +182,12 @@ public class MapperBuilderAssistant extends BaseBuilder {
         resultMap = applyCurrentNamespace(resultMap, true);
 
         // Class parameterType = parameterMapBuilder.type();
+        // 反射获取参数的javaType
         Class<?> javaTypeClass = resolveParameterJavaType(parameterType, property, javaType, jdbcType);
+        // 根据配置获取类型处理器
         TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
 
+        // 若没有配置类型处理器，则在build方法中根据javaType，jdbcType解析类型处理器
         return new ParameterMapping.Builder(configuration, property, javaTypeClass)
                 .jdbcType(jdbcType)
                 .resultMapId(resultMap)

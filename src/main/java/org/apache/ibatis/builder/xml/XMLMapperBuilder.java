@@ -142,10 +142,14 @@ public class XMLMapperBuilder extends BaseBuilder {
             }
             builderAssistant.setCurrentNamespace(namespace);
             // 映射文件中其他配置节点的解析
+            // 解析缓存标签
             cacheRefElement(context.evalNode("cache-ref"));
             cacheElement(context.evalNode("cache"));
+            // 解析参数映射
             parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+            // 解析结果集映射
             resultMapElements(context.evalNodes("/mapper/resultMap"));
+            // 解析sql标签
             sqlElement(context.evalNodes("/mapper/sql"));
             // 处理各个数据库操作语句
             buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
@@ -163,8 +167,10 @@ public class XMLMapperBuilder extends BaseBuilder {
 
     private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
         for (XNode context : list) {
+            // 创建解析对象
             final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
             try {
+                // 解析
                 statementParser.parseStatementNode();
             } catch (IncompleteElementException e) {
                 configuration.addIncompleteStatement(statementParser);
@@ -244,6 +250,9 @@ public class XMLMapperBuilder extends BaseBuilder {
         }
     }
 
+    /**
+     * 参数映射解析
+     */
     private void parameterMapElement(List<XNode> list) {
         for (XNode parameterMapNode : list) {
             String id = parameterMapNode.getStringAttribute("id");
@@ -263,6 +272,7 @@ public class XMLMapperBuilder extends BaseBuilder {
                 Class<?> javaTypeClass = resolveClass(javaType);
                 JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
                 Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
+                // 解析参数映射
                 ParameterMapping parameterMapping = builderAssistant.buildParameterMapping(parameterClass, property, javaTypeClass, jdbcTypeEnum, resultMap, modeEnum, typeHandlerClass, numericScale);
                 parameterMappings.add(parameterMapping);
             }

@@ -37,6 +37,10 @@
         </where>
     </select>
 
+    <parameterMap id="parameterMap" type="org.apache.ibatis.z_run.pojo.Purchase">
+        <parameter property="id" javaType="integer" />
+    </parameterMap>
+
     <select id="findPageByHand" parameterType="org.apache.ibatis.z_run.pojo.QueryCondition" resultType="org.apache.ibatis.z_run.pojo.Purchase">
         select
         <include refid="Base_Column_List" />
