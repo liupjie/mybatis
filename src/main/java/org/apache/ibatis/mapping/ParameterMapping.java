@@ -56,6 +56,7 @@ public class ParameterMapping {
             parameterMapping.configuration = configuration;
             parameterMapping.property = property;
             parameterMapping.javaType = javaType;
+            // 设置参数模式为IN
             parameterMapping.mode = ParameterMode.IN;
         }
 
@@ -100,13 +101,16 @@ public class ParameterMapping {
         }
 
         public ParameterMapping build() {
+            // 解析类型处理器
             resolveTypeHandler();
+            // 校验
             validate();
             return parameterMapping;
         }
 
         private void validate() {
             if (ResultSet.class.equals(parameterMapping.javaType)) {
+                // 如果javaType是结果集，并且resultMap属性值为空，则抛出异常
                 if (parameterMapping.resultMapId == null) {
                     throw new IllegalStateException("Missing resultmap in property '"
                             + parameterMapping.property + "'.  "
@@ -125,6 +129,7 @@ public class ParameterMapping {
             if (parameterMapping.typeHandler == null && parameterMapping.javaType != null) {
                 Configuration configuration = parameterMapping.configuration;
                 TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+                // 根据javaType和jdbcType解析类型处理器
                 parameterMapping.typeHandler = typeHandlerRegistry.getTypeHandler(parameterMapping.javaType, parameterMapping.jdbcType);
             }
         }

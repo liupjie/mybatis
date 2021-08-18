@@ -254,13 +254,17 @@ public class XMLMapperBuilder extends BaseBuilder {
      * 参数映射解析
      */
     private void parameterMapElement(List<XNode> list) {
+        // 解析所有的parameterMap标签
         for (XNode parameterMapNode : list) {
+            // 解析单个parameterMap标签中的属性
             String id = parameterMapNode.getStringAttribute("id");
             String type = parameterMapNode.getStringAttribute("type");
             Class<?> parameterClass = resolveClass(type);
+            // 解析parameterMap标签内部具体的映射关系
             List<XNode> parameterNodes = parameterMapNode.evalNodes("parameter");
             List<ParameterMapping> parameterMappings = new ArrayList<>();
             for (XNode parameterNode : parameterNodes) {
+                // 解析parameter标签中的映射属性
                 String property = parameterNode.getStringAttribute("property");
                 String javaType = parameterNode.getStringAttribute("javaType");
                 String jdbcType = parameterNode.getStringAttribute("jdbcType");
@@ -268,14 +272,19 @@ public class XMLMapperBuilder extends BaseBuilder {
                 String mode = parameterNode.getStringAttribute("mode");
                 String typeHandler = parameterNode.getStringAttribute("typeHandler");
                 Integer numericScale = parameterNode.getIntAttribute("numericScale");
+                // 根据配置参数模式枚举，若无配置，则为null
                 ParameterMode modeEnum = resolveParameterMode(mode);
+                // 根据配置解析javaType，若无配置，则为null
                 Class<?> javaTypeClass = resolveClass(javaType);
+                // 根据配置解析jdbcType，若无配置，则为null
                 JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
+                // 根据配置解析类型处理器，若无配置，则为null
                 Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
                 // 解析参数映射
                 ParameterMapping parameterMapping = builderAssistant.buildParameterMapping(parameterClass, property, javaTypeClass, jdbcTypeEnum, resultMap, modeEnum, typeHandlerClass, numericScale);
                 parameterMappings.add(parameterMapping);
             }
+            // 将解析完成的parameterMap添加到Configuration对象中的parameterMaps属性中
             builderAssistant.addParameterMap(id, parameterClass, parameterMappings);
         }
     }

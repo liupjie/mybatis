@@ -38,7 +38,7 @@
     </select>
 
     <parameterMap id="parameterMap" type="org.apache.ibatis.z_run.pojo.Purchase">
-        <parameter property="id" javaType="integer" />
+        <parameter property="id" />
     </parameterMap>
 
     <select id="findPageByHand" parameterType="org.apache.ibatis.z_run.pojo.QueryCondition" resultType="org.apache.ibatis.z_run.pojo.Purchase">
