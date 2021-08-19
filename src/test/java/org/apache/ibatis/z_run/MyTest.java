@@ -248,6 +248,27 @@ public class MyTest extends BaseDataTest {
         System.out.println(new PageVO<>(pageSize, pageNum, (int) page.getTotal(), purchaseList));
     }
 
+    @Test
+    public void testSort() {
+        List<String> list1 = new ArrayList<>();
+        list1.add("aaaaa");
+        list1.add("dddd");
+        list1.add("eeeee");
+        list1.add("bbbbb");
+        System.out.println(list1);
+        List<String> list2 = new ArrayList<>();
+        list2.add("aaaaa");
+        list2.add("dddd");
+        list2.add("bbbbb");
+        list2.add("eeeee");
+        list1.sort((o1, o2) -> {
+            int idx1 = list2.indexOf(o1);
+            int idx2 = list2.indexOf(o2);
+            return idx1 - idx2;
+        });
+        System.out.println(list1);
+    }
+
 
     public SqlSessionFactory getSqlSessionFactory() {
         // 指定配置文件所处的位置

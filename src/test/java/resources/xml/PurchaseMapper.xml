@@ -83,6 +83,9 @@
     </sql>
 
     <resultMap id="BaseResultMap" type="org.apache.ibatis.z_run.pojo.Purchase">
+        <constructor>
+
+        </constructor>
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="price" jdbcType="INTEGER" property="price" />

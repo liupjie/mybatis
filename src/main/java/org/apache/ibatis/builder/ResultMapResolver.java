@@ -53,7 +53,7 @@ public class ResultMapResolver {
     }
 
     /**
-     * 完成 ResultMap 的继承关系解析
+     * 完成 ResultMap 的继承关系解析，并将解析的结果放入Configuration中的resultMaps中
      * @return
      */
     public ResultMap resolve() {

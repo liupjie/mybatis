@@ -106,6 +106,7 @@ public class ResultMap {
                 resultMap.hasNestedResultMaps = resultMap.hasNestedResultMaps || (resultMapping.getNestedResultMapId() != null && resultMapping.getResultSet() == null);
                 final String column = resultMapping.getColumn();
                 if (column != null) {
+                    // 在已映射的列中添加当前列，名称转换为全大写
                     resultMap.mappedColumns.add(column.toUpperCase(Locale.ENGLISH));
                 } else if (resultMapping.isCompositeResult()) {
                     for (ResultMapping compositeResultMapping : resultMapping.getComposites()) {
@@ -117,24 +118,31 @@ public class ResultMap {
                 }
                 final String property = resultMapping.getProperty();
                 if (property != null) {
+                    // 在已映射的属性中添加当前属性
                     resultMap.mappedProperties.add(property);
                 }
+                // 如果是constructor标签下的映射关系，则放入constructorResultMappings中
                 if (resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR)) {
                     resultMap.constructorResultMappings.add(resultMapping);
                     if (resultMapping.getProperty() != null) {
+                        // 如果映射关系中name属性不为空，则放入constructorArgNames中
                         constructorArgNames.add(resultMapping.getProperty());
                     }
                 } else {
                     resultMap.propertyResultMappings.add(resultMapping);
                 }
+                // 将id放入idResultMappings中（id标签和idArg标签）
                 if (resultMapping.getFlags().contains(ResultFlag.ID)) {
                     resultMap.idResultMappings.add(resultMapping);
                 }
             }
+            // 如果idResultMappings为空，则将所有映射放入
             if (resultMap.idResultMappings.isEmpty()) {
                 resultMap.idResultMappings.addAll(resultMap.resultMappings);
             }
+            // 当constructorArgNames不为空时
             if (!constructorArgNames.isEmpty()) {
+                // 根据配置的参数映射获取对应构造方法中的参数列表
                 final List<String> actualArgNames = argNamesOfMatchingConstructor(constructorArgNames);
                 if (actualArgNames == null) {
                     throw new BuilderException("Error in result map '" + resultMap.id
@@ -142,6 +150,7 @@ public class ResultMap {
                             + resultMap.getType().getName() + "' by arg names " + constructorArgNames
                             + ". There might be more info in debug log.");
                 }
+                // 将映射关系constructorResultMappings按照获取的参数顺序排序
                 resultMap.constructorResultMappings.sort((o1, o2) -> {
                     int paramIdx1 = actualArgNames.indexOf(o1.getProperty());
                     int paramIdx2 = actualArgNames.indexOf(o2.getProperty());
@@ -149,6 +158,7 @@ public class ResultMap {
                 });
             }
             // lock down collections
+            // 锁定映射的结果集
             resultMap.resultMappings = Collections.unmodifiableList(resultMap.resultMappings);
             resultMap.idResultMappings = Collections.unmodifiableList(resultMap.idResultMappings);
             resultMap.constructorResultMappings = Collections.unmodifiableList(resultMap.constructorResultMappings);

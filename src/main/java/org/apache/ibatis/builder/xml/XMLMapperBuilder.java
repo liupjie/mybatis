@@ -290,8 +290,10 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private void resultMapElements(List<XNode> list) throws Exception {
+        // 遍历
         for (XNode resultMapNode : list) {
             try {
+                // 处理单个resultMap标签
                 resultMapElement(resultMapNode);
             } catch (IncompleteElementException e) {
                 // ignore, it will be retried
@@ -303,26 +305,42 @@ public class XMLMapperBuilder extends BaseBuilder {
         return resultMapElement(resultMapNode, Collections.emptyList(), null);
     }
 
+    /**
+     * 兼容处理
+     */
     private ResultMap resultMapElement(XNode resultMapNode, List<ResultMapping> additionalResultMappings, Class<?> enclosingType) throws Exception {
         ErrorContext.instance().activity("processing " + resultMapNode.getValueBasedIdentifier());
+        /**
+         * 所有类型的resultMap相关类型标签都可处理
+         * 针对不同类型的resultMap标签，通过不同的属性来获取type
+         */
         String type = resultMapNode.getStringAttribute("type",
                 resultMapNode.getStringAttribute("ofType",
                         resultMapNode.getStringAttribute("resultType",
                                 resultMapNode.getStringAttribute("javaType"))));
+        // 通过别名来解析获取typeClass
         Class<?> typeClass = resolveClass(type);
+        // 获取继承的typeClass
         if (typeClass == null) {
             typeClass = inheritEnclosingType(resultMapNode, enclosingType);
         }
         Discriminator discriminator = null;
         List<ResultMapping> resultMappings = new ArrayList<>();
+        //将已解析的标签放入resultMappings
         resultMappings.addAll(additionalResultMappings);
         List<XNode> resultChildren = resultMapNode.getChildren();
+        // 解析resultMap标签下的所有子标签
         for (XNode resultChild : resultChildren) {
+            // 解析构造标签constructor
             if ("constructor".equals(resultChild.getName())) {
                 processConstructorElement(resultChild, typeClass, resultMappings);
-            } else if ("discriminator".equals(resultChild.getName())) {
+            }
+            // 解析discriminator鉴别器标签
+            else if ("discriminator".equals(resultChild.getName())) {
                 discriminator = processDiscriminatorElement(resultChild, typeClass, resultMappings);
-            } else {
+            }
+            // 解析普通标签
+            else {
                 List<ResultFlag> flags = new ArrayList<>();
                 if ("id".equals(resultChild.getName())) {
                     flags.add(ResultFlag.ID);
@@ -334,8 +352,10 @@ public class XMLMapperBuilder extends BaseBuilder {
                 resultMapNode.getValueBasedIdentifier());
         String extend = resultMapNode.getStringAttribute("extends");
         Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
+        // 创建解析器
         ResultMapResolver resultMapResolver = new ResultMapResolver(builderAssistant, id, typeClass, extend, discriminator, resultMappings, autoMapping);
         try {
+            // 解析
             return resultMapResolver.resolve();
         } catch (IncompleteElementException e) {
             configuration.addIncompleteResultMap(resultMapResolver);
@@ -437,9 +457,13 @@ public class XMLMapperBuilder extends BaseBuilder {
         String resultSet = context.getStringAttribute("resultSet");
         String foreignColumn = context.getStringAttribute("foreignColumn");
         boolean lazy = "lazy".equals(context.getStringAttribute("fetchType", configuration.isLazyLoadingEnabled() ? "lazy" : "eager"));
+        // 根据配置解析javaType
         Class<?> javaTypeClass = resolveClass(javaType);
+        // 根据配置解析typeHandler
         Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
+        // 根据配置解析jdbcType
         JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
+        // 进行参数映射，并解析类型处理器
         return builderAssistant.buildResultMapping(resultType, property, column, javaTypeClass, jdbcTypeEnum, nestedSelect, nestedResultMap, notNullColumn, columnPrefix, typeHandlerClass, flags, resultSet, foreignColumn, lazy);
     }
 

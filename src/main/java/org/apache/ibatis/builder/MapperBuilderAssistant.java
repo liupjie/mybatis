@@ -221,10 +221,10 @@ public class MapperBuilderAssistant extends BaseBuilder {
             ResultMap resultMap = configuration.getResultMap(extend);
             // 获取父级的属性映射
             List<ResultMapping> extendedResultMappings = new ArrayList<>(resultMap.getResultMappings());
-            // 删除当前ResultMap中已有的父级属性映射，为当前属性映射覆盖父级属性创造条件
+            // 删除父类映射中在子类映射中已经存在的属性，从而使用子类映射覆盖父类映射
             extendedResultMappings.removeAll(resultMappings);
             // Remove parent constructor if this resultMap declares a constructor.
-            // 如果当前ResultMap设置有构建器，则移除父级构建器
+            // 如果当前子类ResultMap设置有构建器，则移除父级构建器
             boolean declaresConstructor = false;
             for (ResultMapping resultMapping : resultMappings) {
                 if (resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR)) {
@@ -405,7 +405,9 @@ public class MapperBuilderAssistant extends BaseBuilder {
             String resultSet,
             String foreignColumn,
             boolean lazy) {
+        // 反射获取javaType，如果javaType为空，则返回Object.class
         Class<?> javaTypeClass = resolveResultJavaType(resultType, property, javaType);
+        // 根据配置获取类型处理器
         TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
         List<ResultMapping> composites;
         if ((nestedSelect == null || nestedSelect.isEmpty()) && (foreignColumn == null || foreignColumn.isEmpty())) {
