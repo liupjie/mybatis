@@ -46,6 +46,7 @@ public class GenericTokenParser {
             return "";
         }
         // search open token
+        // 查找openToken的位置
         int start = text.indexOf(openToken);
         if (start == -1) {
             return text;
@@ -54,6 +55,7 @@ public class GenericTokenParser {
         int offset = 0;
         final StringBuilder builder = new StringBuilder();
         StringBuilder expression = null;
+        // 当存在openToken时，才继续处理
         while (start > -1) {
             if (start > 0 && src[start - 1] == '\\') {
                 // this open token is escaped. remove the backslash and continue.
@@ -66,31 +68,44 @@ public class GenericTokenParser {
                 } else {
                     expression.setLength(0);
                 }
+                // 拼接从0到openToken之前的字符
                 builder.append(src, offset, start - offset);
+                // 设置offset值为openToken结束的位置
                 offset = start + openToken.length();
+                // 从offset值之后开始找第一个closeToken的位置
                 int end = text.indexOf(closeToken, offset);
+                // 如果存在，则继续处理
                 while (end > -1) {
                     if (end > offset && src[end - 1] == '\\') {
                         // this close token is escaped. remove the backslash and continue.
                         expression.append(src, offset, end - offset - 1).append(closeToken);
                         offset = end + closeToken.length();
+                        // 继续查找当前closeToken之后的closeToken
                         end = text.indexOf(closeToken, offset);
                     } else {
                         expression.append(src, offset, end - offset);
                         break;
                     }
                 }
+                // 如果不存在
                 if (end == -1) {
                     // close token was not found.
+                    // 拼接剩余的字符
                     builder.append(src, start, src.length - start);
+                    // 设置offset为字符数组的长度
                     offset = src.length;
                 } else {
+                    /**
+                     * DynamicCheckerTokenParser：如果存在，则设置当前SQL为动态的
+                     */
                     builder.append(handler.handleToken(expression.toString()));
+                    // 设置offset值为closeToken结束的位置
                     offset = end + closeToken.length();
                 }
             }
             start = text.indexOf(openToken, offset);
         }
+        // 拼接剩余的字符
         if (offset < src.length) {
             builder.append(src, offset, src.length - offset);
         }

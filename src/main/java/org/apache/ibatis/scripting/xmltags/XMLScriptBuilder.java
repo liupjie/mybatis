@@ -55,12 +55,13 @@ public class XMLScriptBuilder extends BaseBuilder {
         super(configuration);
         this.context = context;
         this.parameterType = parameterType;
+        // 初始化各种node处理器
         initNodeHandlerMap();
     }
 
 
     /**
-     * SQL节点和NodeHandler实现类的对应 关系由nodeHandlerMap负责存储
+     * SQL节点和NodeHandler实现类的对应关系由nodeHandlerMap负责存储
      */
     private void initNodeHandlerMap() {
         nodeHandlerMap.put("trim", new TrimHandler());
@@ -114,7 +115,7 @@ public class XMLScriptBuilder extends BaseBuilder {
                 String data = child.getStringBody("");
                 TextSqlNode textSqlNode = new TextSqlNode(data);
                 // 只要有一个TextSqlNode对象是动态的，则整个MixedSqlNode就是动态的
-                if (textSqlNode.isDynamic()) {
+                if (textSqlNode.isDynamic()) {// 判断当前节点是否包含$，如果包含，则是动态的
                     contents.add(textSqlNode);
                     isDynamic = true;
                 } else {
@@ -122,13 +123,14 @@ public class XMLScriptBuilder extends BaseBuilder {
                 }
             } else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) { // issue #628 // 子XNode类型任然是Node类型
                 String nodeName = child.getNode().getNodeName();
-                // 找到对应的处理器
+                // 找到对应的动态标签处理器
                 NodeHandler handler = nodeHandlerMap.get(nodeName);
                 if (handler == null) {
                     throw new BuilderException("Unknown element <" + nodeName + "> in SQL statement.");
                 }
-                // 用处理器处理节点
+                // 用动态标签处理器处理节点
                 handler.handleNode(child, contents);
+                // 如果包含动态标签，则整个SQL就是动态的
                 isDynamic = true;
             }
         }

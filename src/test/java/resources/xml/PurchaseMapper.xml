@@ -82,10 +82,7 @@
         id, `name`, price, category
     </sql>
 
-    <resultMap id="BaseResultMap" type="org.apache.ibatis.z_run.pojo.Purchase">
-        <constructor>
-
-        </constructor>
+    <resultMap id="BaseResultMap" type="org.apache.ibatis.z_run.pojo.Purchase" extends="PurchaseNestedResultMap">
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="price" jdbcType="INTEGER" property="price" />

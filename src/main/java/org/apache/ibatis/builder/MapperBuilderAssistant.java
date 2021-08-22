@@ -213,7 +213,8 @@ public class MapperBuilderAssistant extends BaseBuilder {
         extend = applyCurrentNamespace(extend, true);
 
         // 解析ResultMap的继承关系
-        if (extend != null) { // 如果存在ResultMap的继承
+        if (extend != null) {
+            // 判断configuration对象中是否存在extend指向的ResultMap，如果没有，则抛出异常，在后续操作中再次对当前ResultMap进行解析处理
             if (!configuration.hasResultMap(extend)) {
                 throw new IncompleteElementException("Could not find a parent resultmap with id '" + extend + "'");
             }

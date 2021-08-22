@@ -80,7 +80,7 @@ public class XMLStatementBuilder extends BaseBuilder {
         boolean useCache = context.getBooleanAttribute("useCache", isSelect);
         boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
 
-        // 处理语句中的Include节点
+        // 处理语句中的Include节点，将SQL中的include节点进行替换
         // Include Fragments before parsing
         XMLIncludeTransformer includeParser = new XMLIncludeTransformer(configuration, builderAssistant);
         includeParser.applyIncludes(context.getNode());
@@ -93,7 +93,7 @@ public class XMLStatementBuilder extends BaseBuilder {
          */
         Class<?> parameterTypeClass = resolveClass(parameterType);
 
-        // 语句类型，默认值是XMLLanguageDriver
+        // 语句类型，默认值是XMLLanguageDriver（在Configuration默认构造方法中进行创建）
         String lang = context.getStringAttribute("lang");
         LanguageDriver langDriver = getLanguageDriver(lang);
 

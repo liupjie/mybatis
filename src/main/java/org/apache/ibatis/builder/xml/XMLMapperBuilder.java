@@ -115,11 +115,11 @@ public class XMLMapperBuilder extends BaseBuilder {
             configurationElement(parser.evalNode("/mapper"));
             // 加入已解析的列表，防止重复解析
             configuration.addLoadedResource(resource);
-            // 将Mapper注册给configuration
+            // 将Mapper注册给configuration，并对当前xml对应的接口中是否含有注解进行解析
             bindMapperForNamespace();
         }
 
-        // 下面分别用来处理失败的<resultMap>、<cache-ref>、SQL语句
+        // 下面分别用来处理第一次解析失败的<resultMap>、<cache-ref>、SQL语句
         parsePendingResultMaps();
         parsePendingCacheRefs();
         parsePendingStatements();
@@ -159,6 +159,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private void buildStatementFromContext(List<XNode> list) {
+        // 全局databaseId属性不为空
         if (configuration.getDatabaseId() != null) {
             buildStatementFromContext(list, configuration.getDatabaseId());
         }
@@ -173,6 +174,7 @@ public class XMLMapperBuilder extends BaseBuilder {
                 // 解析
                 statementParser.parseStatementNode();
             } catch (IncompleteElementException e) {
+                // 将未处理完成的放入容器中，后续统一进行重试
                 configuration.addIncompleteStatement(statementParser);
             }
         }
@@ -406,6 +408,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private void sqlElement(List<XNode> list) {
+        // 全局databaseId属性不为空
         if (configuration.getDatabaseId() != null) {
             sqlElement(list, configuration.getDatabaseId());
         }
@@ -417,6 +420,7 @@ public class XMLMapperBuilder extends BaseBuilder {
             String databaseId = context.getStringAttribute("databaseId");
             String id = context.getStringAttribute("id");
             id = builderAssistant.applyCurrentNamespace(id, false);
+            // 判断databaseId的配置情况
             if (databaseIdMatchesCurrent(id, databaseId, requiredDatabaseId)) {
                 sqlFragments.put(id, context);
             }
@@ -424,16 +428,20 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private boolean databaseIdMatchesCurrent(String id, String databaseId, String requiredDatabaseId) {
+        // 当全局databaseId不为空时，返回当前sql标签中的databaseId配置与全局配置是否相等
         if (requiredDatabaseId != null) {
             return requiredDatabaseId.equals(databaseId);
         }
+        // 当全局配置为空，且当前配置不为空时，直接返回false，不匹配
         if (databaseId != null) {
             return false;
         }
+        // 当全局和当前的databaseId配置都为空时，判断是否已经解析当前sql标签，如果未解析，则返回true
         if (!this.sqlFragments.containsKey(id)) {
             return true;
         }
         // skip this fragment if there is a previous one with a not null databaseId
+        // 如果当前sql标签已解析，则取出标签信息，判断databaseId配置是否为空
         XNode context = this.sqlFragments.get(id);
         return context.getStringAttribute("databaseId") == null;
     }
@@ -493,10 +501,12 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private void bindMapperForNamespace() {
+        // 获取当前命名空间
         String namespace = builderAssistant.getCurrentNamespace();
         if (namespace != null) {
             Class<?> boundType = null;
             try {
+                // 根据命名空间获取对应的Class对象
                 boundType = Resources.classForName(namespace);
             } catch (ClassNotFoundException e) {
                 //ignore, bound type is not required
@@ -506,7 +516,9 @@ public class XMLMapperBuilder extends BaseBuilder {
                     // Spring may not know the real resource name so we set a flag
                     // to prevent loading again this resource from the mapper interface
                     // look at MapperAnnotationBuilder#loadXmlResource
+                    // 当前xml文件已经解析
                     configuration.addLoadedResource("namespace:" + namespace);
+                    // 设置当前xml对应的Class对象到Configuration中，并对当前xml对应的接口中是否含有注解进行解析
                     configuration.addMapper(boundType);
                 }
             }

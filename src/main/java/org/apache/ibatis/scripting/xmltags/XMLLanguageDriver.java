@@ -47,7 +47,9 @@ public class XMLLanguageDriver implements LanguageDriver {
      */
     @Override
     public SqlSource createSqlSource(Configuration configuration, XNode script, Class<?> parameterType) {
+        // 构建XMLScriptBuilder对象，并初始化各种node处理器
         XMLScriptBuilder builder = new XMLScriptBuilder(configuration, script, parameterType);
+        // 解析
         return builder.parseScriptNode();
     }
 
