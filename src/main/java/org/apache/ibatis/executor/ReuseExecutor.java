@@ -81,13 +81,13 @@ public class ReuseExecutor extends BaseExecutor {
         Statement stmt;
         BoundSql boundSql = handler.getBoundSql();
         String sql = boundSql.getSql();
-        if (hasStatementFor(sql)) {
+        if (hasStatementFor(sql)) { // 判断是否有缓存
             stmt = getStatement(sql);
             applyTransactionTimeout(stmt);
         } else {
             Connection connection = getConnection(statementLog);
             stmt = handler.prepare(connection, transaction.getTimeout());
-            putStatement(sql, stmt);
+            putStatement(sql, stmt); // 缓存sql与PreparedStatement
         }
         handler.parameterize(stmt);
         return stmt;

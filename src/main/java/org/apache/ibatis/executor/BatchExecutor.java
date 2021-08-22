@@ -74,6 +74,7 @@ public class BatchExecutor extends BaseExecutor {
             statementList.add(stmt);
             batchResultList.add(new BatchResult(ms, sql, parameterObject));
         }
+        // addBatch
         handler.batch(stmt);
         return BATCH_UPDATE_RETURN_VALUE;
     }
