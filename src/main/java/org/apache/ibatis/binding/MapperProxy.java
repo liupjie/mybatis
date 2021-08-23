@@ -26,7 +26,7 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
 
 /**
- * MapperProxy基于动态代理将针对映射接口的方法调用转接成了对MapperMethod对象 execute方法的调用，
+ * MapperProxy基于动态代理将针对映射接口的方法调用转接成了对MapperMethod对象execute方法的调用，
  * 即只要用对应的 MapperProxy对象作为映射接口的 实现，便可以完整地实现为映射接口接入数据库操作的功能
  *
  * @author Clinton Begin
@@ -37,7 +37,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     private static final long serialVersionUID = -6424540398559729838L;
     private final SqlSession sqlSession;
     private final Class<T> mapperInterface;
-    // methodCache 属性维护接口方法和 M apperMethod 对象的对应关系
+    // methodCache 属性维护接口方法和 MapperMethod 对象的对应关系
     // 该Map的键为方法，值为MapperMethod对象，通过该属性，完成MapperProxy内（即映射接口内）方法和MapperMethod的绑定
     private final Map<Method, MapperMethod> methodCache;
 

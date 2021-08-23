@@ -837,6 +837,9 @@ public class Configuration {
     }
 
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+        /**
+         * 通过Mapper类型与sqlsession获取Mapper对象，将{@link Configuration#addMapper(java.lang.Class)}保存的MapperProxyFactory对象取出
+         */
         return mapperRegistry.getMapper(type, sqlSession);
     }
 

@@ -55,7 +55,9 @@ public class MapperProxyFactory<T> {
     }
 
     public T newInstance(SqlSession sqlSession) {
+        // 创建MapperProxy代理实例
         final MapperProxy<T> mapperProxy = new MapperProxy<>(sqlSession, mapperInterface, methodCache);
+        // 创建mapperInterface接口的代理对象
         return newInstance(mapperProxy);
     }
 
