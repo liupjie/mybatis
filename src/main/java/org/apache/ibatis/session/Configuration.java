@@ -833,6 +833,7 @@ public class Configuration {
     }
 
     public <T> void addMapper(Class<T> type) {
+        // 将当前Class对象添加到映射关系中
         mapperRegistry.addMapper(type);
     }
 

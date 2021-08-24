@@ -78,11 +78,15 @@ public class MapperRegistry {
             }
             boolean loadCompleted = false;
             try {
-                // 将当前接口放入knownMappers，防止重复解析
+                /**
+                 * 1. 将当前接口放入knownMappers，防止重复解析
+                 * 2. 将接口使用MapperProxyFactory包装后，放入映射关系中
+                 */
                 knownMappers.put(type, new MapperProxyFactory<>(type));
                 // It's important that the type is added before the parser is run
                 // otherwise the binding may automatically be attempted by the
                 // mapper parser. If the type is already known, it won't try.
+                // 解析注解的解析器
                 MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
                 // 开始解析
                 parser.parse();
