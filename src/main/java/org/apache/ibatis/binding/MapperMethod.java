@@ -129,6 +129,7 @@ public class MapperMethod {
             throw new BindingException("Mapper method '" + command.getName()
                     + " attempted to return null from a method with a primitive return type (" + method.getReturnType() + ").");
         }
+        // 返回执行结果
         return result;
     }
 

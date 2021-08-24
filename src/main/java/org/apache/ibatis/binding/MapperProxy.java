@@ -73,7 +73,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
          * 2. 如果存在method key，则返回对应的value
          */
         final MapperMethod mapperMethod = cachedMapperMethod(method);
-        // 调用 MapperMethod 中的execute方法
+        // 调用MapperMethod中的execute方法，执行操作，并获取结果并返回
         return mapperMethod.execute(sqlSession, args);
     }
 
