@@ -63,13 +63,14 @@ public class ParamNameResolver {
     public ParamNameResolver(Configuration config, Method method) {
         // 获取方法参数类型列表
         final Class<?>[] paramTypes = method.getParameterTypes();
-        // 准备存取所有的参数的注解，是二维数组
+        // 准备存储所有的参数的注解，是二维数组，分别存储参数顺序与参数注解(0,Param),(1,Param)
         final Annotation[][] paramAnnotations = method.getParameterAnnotations();
         final SortedMap<Integer, String> map = new TreeMap<>();
         int paramCount = paramAnnotations.length;
         // get names from @Param annotations
         // 循环处理各个参数
         for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
+            // 跳过RowBounds与ResultHandler参数
             if (isSpecialParameter(paramTypes[paramIndex])) {
                 // skip special parameters
                 // 跳过特别参数
@@ -78,7 +79,7 @@ public class ParamNameResolver {
             // 参数名称
             String name = null;
             for (Annotation annotation : paramAnnotations[paramIndex]) {
-                // 找出参数的注解
+                // 找出参数的注解@Param
                 if (annotation instanceof Param) {
                     // 如果注解是 Param
                     hasParamAnnotation = true;
@@ -100,9 +101,10 @@ public class ParamNameResolver {
                     name = String.valueOf(map.size());
                 }
             }
-            // 参数顺序->参数名称
+            // 参数顺序:参数名称
             map.put(paramIndex, name);
         }
+        // 锁定map，不可修改
         names = Collections.unmodifiableSortedMap(map);
     }
 

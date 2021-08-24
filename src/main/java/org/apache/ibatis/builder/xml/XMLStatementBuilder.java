@@ -73,7 +73,7 @@ public class XMLStatementBuilder extends BaseBuilder {
 
         // 读取节点名称
         String nodeName = context.getNode().getNodeName();
-        // 读取和判断语句类型
+        // 读取和判断语句类型SqlCommandType
         SqlCommandType sqlCommandType = SqlCommandType.valueOf(nodeName.toUpperCase(Locale.ENGLISH));
         boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
         boolean flushCache = context.getBooleanAttribute("flushCache", !isSelect);

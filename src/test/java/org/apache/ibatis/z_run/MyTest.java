@@ -215,7 +215,9 @@ public class MyTest extends BaseDataTest {
         QueryCondition condition = new QueryCondition();
         condition.setId(1);
         condition.setCategory(1);
-        System.out.println(mapper.findByCondition(condition));
+        // 调用mapper方法，执行查询
+        List<Purchase> purchaseList = mapper.findByCondition(condition);
+        System.out.println(purchaseList);
     }
 
     int pageSize = 2;

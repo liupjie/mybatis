@@ -66,8 +66,8 @@ public class MapperMethod {
     /**
      * 执行映射接口中的方法
      *
-     *  MapperMethod类将一个数据库操作语句和一个 Java方法绑 定在了一起:它的MethodSignature属性保存了这个方法的详细信息;
-     *  它的 SqlCommand属性持有这个方法对应的 SQL语句。因而只要调用 MapperMethod对象的 execute方法，就可以触发具 体的数据库操作，于是数据库操作就被转化为了方法
+     *  MapperMethod类将一个数据库操作语句和一个 Java方法绑定在了一起:它的MethodSignature属性保存了这个方法的详细信息;
+     *  它的 SqlCommand属性持有这个方法对应的 SQL语句。因而只要调用 MapperMethod对象的 execute方法，就可以触发具体的数据库操作，于是数据库操作就被转化为了方法
      *
      * @param sqlSession sqlSession接口的实例，通过它可以进行数据库的操作
      * @param args       执行接口方法时传入的参数
@@ -257,6 +257,7 @@ public class MapperMethod {
             final String methodName = method.getName();
             // 方法所在的类，可能是mapperInterface，也可能是mapperInterface的子类
             final Class<?> declaringClass = method.getDeclaringClass();
+            // 获取MappedStatement
             MappedStatement ms = resolveMappedStatement(mapperInterface, methodName, declaringClass,
                     configuration);
             if (ms == null) {
@@ -268,7 +269,9 @@ public class MapperMethod {
                             + mapperInterface.getName() + "." + methodName);
                 }
             } else {
+                // 获取MappedStatement的ID
                 name = ms.getId();
+                // 获取SqlCommandType
                 type = ms.getSqlCommandType();
                 if (type == SqlCommandType.UNKNOWN) {
                     throw new BindingException("Unknown execution method for: " + name);
@@ -343,6 +346,7 @@ public class MapperMethod {
         private final ParamNameResolver paramNameResolver;
 
         public MethodSignature(Configuration configuration, Class<?> mapperInterface, Method method) {
+            // 获取返回值类型
             Type resolvedReturnType = TypeParameterResolver.resolveReturnType(method, mapperInterface);
             if (resolvedReturnType instanceof Class<?>) {
                 this.returnType = (Class<?>) resolvedReturnType;
@@ -351,14 +355,19 @@ public class MapperMethod {
             } else {
                 this.returnType = method.getReturnType();
             }
+            // 判断返回值类型
             this.returnsVoid = void.class.equals(this.returnType);
             this.returnsMany = configuration.getObjectFactory().isCollection(this.returnType) || this.returnType.isArray();
             this.returnsCursor = Cursor.class.equals(this.returnType);
             this.returnsOptional = Optional.class.equals(this.returnType);
+            // 处理返回值是MAP的情况
             this.mapKey = getMapKey(method);
             this.returnsMap = this.mapKey != null;
+            // 解析参数中RowBounds对象的位置
             this.rowBoundsIndex = getUniqueParamIndex(method, RowBounds.class);
+            // 解析参数中ResultHandler对象的位置
             this.resultHandlerIndex = getUniqueParamIndex(method, ResultHandler.class);
+            // 参数名称解析
             this.paramNameResolver = new ParamNameResolver(configuration, method);
         }
 
