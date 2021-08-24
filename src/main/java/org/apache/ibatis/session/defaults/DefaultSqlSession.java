@@ -304,6 +304,10 @@ public class DefaultSqlSession implements SqlSession {
 
     @Override
     public <T> T getMapper(Class<T> type) {
+        /**
+         * 1.configuration对象为创建DefaultSqlSessionFactory时通过解析配置文件而创建的
+         * 2.openSession时，会将configuration对象作为构造参数传入
+         */
         return configuration.getMapper(type, this);
     }
 
