@@ -89,7 +89,8 @@ public class ParamNameResolver {
                 }
             }
             if (name == null) {
-                // 否则，保留参数的原名称
+                // 如果没有@Param注解，并且在配置文件中配置了useActualParamName=true，则使用参数实际的名称
+                // 但为了使用该特性，必须采用Java8编译，并且编译时需要加上-parameters选项，否则实际参数名称形如arg0
                 // @Param was not specified.
                 if (config.isUseActualParamName()) {
                     name = getActualParamName(method, paramIndex);
@@ -138,15 +139,16 @@ public class ParamNameResolver {
      * 如果只有一个参数，直接返回参数
      * 如果有多个参数，则进行与之前解析出的参数名称进行对应，返回对应关系
      *
-     * 参数名称->参数值
-     * paramx->参数值
+     * 参数名称:参数值
+     * paramx:参数值
      */
     public Object getNamedParams(Object[] args) {
+        // 参数名称个数
         final int paramCount = names.size();
         if (args == null || paramCount == 0) {
             return null;
         } else if (!hasParamAnnotation && paramCount == 1) {
-            // 如果只有一个参数，直接返回参数
+            // 如果不含有@Param注解，且只有一个参数，直接返回参数
             return args[names.firstKey()];
         } else {
             final Map<String, Object> param = new ParamMap<>();
@@ -160,6 +162,7 @@ public class ParamNameResolver {
                 // add generic param names (param1, param2, ...)
                 final String genericParamName = GENERIC_NAME_PREFIX + String.valueOf(i + 1);
                 // ensure not to overwrite parameter named with @Param
+                // 生成的参数名称不能覆盖names中已有的参数名称
                 if (!names.containsValue(genericParamName)) {
                     param.put(genericParamName, args[entry.getKey()]);
                 }
