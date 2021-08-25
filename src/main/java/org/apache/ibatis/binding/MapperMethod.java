@@ -166,13 +166,24 @@ public class MapperMethod {
         }
     }
 
+    /**
+     * 查询多个结果
+     * @param sqlSession session
+     * @param args 当前查询的实际参数
+     * @param <E>
+     * @return
+     */
     private <E> Object executeForMany(SqlSession sqlSession, Object[] args) {
         List<E> result;
+        // 参数名称与参数值的映射
         Object param = method.convertArgsToSqlCommandParam(args);
-        if (method.hasRowBounds()) {
+        if (method.hasRowBounds()) {// 判断是否有RowBounds参数
+            // 获取RowBounds参数
             RowBounds rowBounds = method.extractRowBounds(args);
+            // 带RowBounds的查询
             result = sqlSession.selectList(command.getName(), param, rowBounds);
         } else {
+            // 不带RowBounds的查询
             result = sqlSession.selectList(command.getName(), param);
         }
         // issue #510 Collections & arrays support
