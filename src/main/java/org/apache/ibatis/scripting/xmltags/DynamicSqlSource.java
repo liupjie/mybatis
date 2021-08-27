@@ -40,7 +40,7 @@ public class DynamicSqlSource implements SqlSource {
     /**
      * 获取一个BoundSql对象
      *
-     * DynamicSqlSource和 RawSqlSource都会转 化为 StaticSqlSource，然后才能给出一个 BoundSql对象。
+     * DynamicSqlSource和 RawSqlSource都会转化为 StaticSqlSource，然后才能给出一个 BoundSql对象。
      *
      * @param parameterObject 参数对象
      * @return BoundSql对象
@@ -54,7 +54,7 @@ public class DynamicSqlSource implements SqlSource {
         // 处理占位符，汇总参数信息
         SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
         Class<?> parameterType = parameterObject == null ? Object.class : parameterObject.getClass();
-        // 使用SqlSourceBuilder处理"#{}"，将其转化为"？"，最终生成了StaticSqlSource对象
+        // 使用SqlSourceBuilder处理"#{}"，将其转化为"?"，然后创建ParameterMapping，最终生成了StaticSqlSource对象
         SqlSource sqlSource = sqlSourceParser.parse(context.getSql(), parameterType, context.getBindings());
         BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
         // 把context.getBindings()的参数放到boundSql的metaParameters中进行保存

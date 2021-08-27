@@ -58,14 +58,14 @@ public class DynamicContext {
      */
     public DynamicContext(Configuration configuration, Object parameterObject) {
         if (parameterObject != null && !(parameterObject instanceof Map)) {
-            // 获取参数对象的元对象
+            // 获取参数对象的元对象，包括参数对象的get/set方法、属性等
             MetaObject metaObject = configuration.newMetaObject(parameterObject);
             // 判断参数对象本身是否有对应的类型处理器
             boolean existsTypeHandler = configuration.getTypeHandlerRegistry().hasTypeHandler(parameterObject.getClass());
             // 方法上下文信息
             bindings = new ContextMap(metaObject, existsTypeHandler);
         } else {
-            // 上线文信息为空
+            // 上下文信息为空
             bindings = new ContextMap(null, false);
         }
         // 把参数对象放入上下文信息

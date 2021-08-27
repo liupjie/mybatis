@@ -116,7 +116,7 @@ public class XMLStatementBuilder extends BaseBuilder {
                     ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
         }
 
-        // 根据获取的LanguageDriver来创建SqlSource
+        // 根据获取的LanguageDriver来创建SqlSource，默认是XMLLanguageDriver
         SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
         // 读取各个配置属性
         StatementType statementType = StatementType.valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));

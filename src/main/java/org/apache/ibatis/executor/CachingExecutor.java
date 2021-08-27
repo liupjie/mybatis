@@ -74,7 +74,8 @@ public class CachingExecutor implements Executor {
 
     /**
      * 更新数据库数据，INSERT/UPDATE/DELETE三种操作都会调用该方法
-     * @param ms 映射语句
+     *
+     * @param ms              映射语句
      * @param parameterObject 参数对象
      * @return 数据库操作结果
      * @throws SQLException
@@ -88,8 +89,11 @@ public class CachingExecutor implements Executor {
 
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
+        // 获取BoundSql，其中包含可执行的SQL以及响应的参数映射
         BoundSql boundSql = ms.getBoundSql(parameterObject);
+        // 使用实际Executor生成缓存键
         CacheKey key = createCacheKey(ms, parameterObject, rowBounds, boundSql);
+        // 使用实际Executor执行查询
         return query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
     }
 
@@ -101,13 +105,14 @@ public class CachingExecutor implements Executor {
 
     /**
      * 查询数据库中的数据
-     * @param ms 映射语句
+     *
+     * @param ms              映射语句
      * @param parameterObject 参数对象
-     * @param rowBounds 翻页限制条件
-     * @param resultHandler 结果处理器
-     * @param key 缓存的键
-     * @param boundSql 查询语句
-     * @param <E> 结果类型
+     * @param rowBounds       翻页限制条件
+     * @param resultHandler   结果处理器
+     * @param key             缓存的键
+     * @param boundSql        查询语句
+     * @param <E>             结果类型
      * @return 结果列表
      * @throws SQLException
      */
@@ -120,12 +125,12 @@ public class CachingExecutor implements Executor {
         if (cache != null) { // 存在缓存
             // 根据要求判断语句执行前是否要清除二级缓存，如果需要，清除二级缓存
             flushCacheIfRequired(ms);
-            if (ms.isUseCache() && resultHandler == null) { // 该语句使用缓存且没有输出结果处理器
+            if (ms.isUseCache() && resultHandler == null) { // 该语句使用缓存且没有结果处理器
                 // 二级缓存不支持含有输出参数的CALLABLE语句，故在这里进行判断
                 ensureNoOutParams(ms, boundSql);
                 @SuppressWarnings("unchecked")
                 // 从缓存中读取结果
-                        List<E> list = (List<E>) tcm.getObject(cache, key);
+                List<E> list = (List<E>) tcm.getObject(cache, key);
                 if (list == null) { // 缓存中没有结果
                     // 交给被包装的执行器执行
                     list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
@@ -194,6 +199,7 @@ public class CachingExecutor implements Executor {
     /**
      * 根据要求判断语句执行前是否要清除二级缓存，如果需要，清除二级缓存
      * 注意：默认情况下，非SELECT语句的isFlushCacheRequired方法会返回true
+     *
      * @param ms MappedStatement
      */
     private void flushCacheIfRequired(MappedStatement ms) {

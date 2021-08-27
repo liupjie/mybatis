@@ -296,8 +296,9 @@ public final class MappedStatement {
     public BoundSql getBoundSql(Object parameterObject) {
         // 获取可执行的SQL
         BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
-        // 获取参数映射
+        // 获取SQL对应的参数映射
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+        // 判断参数映射是否为空，如果为空，则使用默认的参数映射（配置的parameterMap或parameterType）
         if (parameterMappings == null || parameterMappings.isEmpty()) {
             boundSql = new BoundSql(configuration, boundSql.getSql(), parameterMap.getParameterMappings(), parameterObject);
         }

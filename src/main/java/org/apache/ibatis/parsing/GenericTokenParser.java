@@ -97,6 +97,8 @@ public class GenericTokenParser {
                 } else {
                     /**
                      * DynamicCheckerTokenParser：如果存在，则设置当前SQL为动态的
+                     * BindingTokenParser：获取$变量的值
+                     * ParameterMappingTokenHandler：将#替换为？，并构建参数映射ParameterMapping
                      */
                     builder.append(handler.handleToken(expression.toString()));
                     // 设置offset值为closeToken结束的位置

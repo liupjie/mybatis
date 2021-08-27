@@ -103,14 +103,19 @@ public class TextSqlNode implements SqlNode {
 
         @Override
         public String handleToken(String content) {
+            // 获取参数
             Object parameter = context.getBindings().get("_parameter");
             if (parameter == null) {
+                // 参数为null，将$变量替换为null
                 context.getBindings().put("value", null);
             } else if (SimpleTypeRegistry.isSimpleType(parameter.getClass())) {
+                // 判断是否为基本数据类型，如果是，则直接将值放入上下文环境中
                 context.getBindings().put("value", parameter);
             }
+            // 从上下文中获取参数值或从parameterMetaObject参数对象中获取参数值
             Object value = OgnlCache.getValue(content, context.getBindings());
             String srtValue = value == null ? "" : String.valueOf(value); // issue #274 return "" instead of "null"
+            // 检查SQL注入
             checkInjection(srtValue);
             return srtValue;
         }

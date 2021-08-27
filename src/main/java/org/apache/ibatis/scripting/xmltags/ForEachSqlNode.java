@@ -85,7 +85,7 @@ public class ForEachSqlNode implements SqlNode {
     public boolean apply(DynamicContext context) {
         // 获取上线文环境
         Map<String, Object> bindings = context.getBindings();
-        // 交给表达式求值器解析表达式，从而获得迭代器
+        // 交给表达式求值器解析collection表达式，从而获得迭代器
         final Iterable<?> iterable = evaluator.evaluateIterable(collectionExpression, bindings);
         if (!iterable.iterator().hasNext()) { // 没有可迭代的元素
             // 不需要拼接信息，直接返回

@@ -56,7 +56,7 @@ public class SqlSourceBuilder extends BaseBuilder {
         ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
         // 通用的占位符解析器，用来进行占位符替换
         GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
-        // 将#{}替换为?的SQL语句
+        // 将#{}替换为?的SQL语句，并创建ParameterMapping
         String sql = parser.parse(originalSql);
         // 生成新的StaticSqlSource对象
         return new StaticSqlSource(configuration, sql, handler.getParameterMappings());
@@ -80,7 +80,9 @@ public class SqlSourceBuilder extends BaseBuilder {
 
         @Override
         public String handleToken(String content) {
+            // 构建ParameterMapping
             parameterMappings.add(buildParameterMapping(content));
+            // 替换解析结果为?号
             return "?";
         }
 

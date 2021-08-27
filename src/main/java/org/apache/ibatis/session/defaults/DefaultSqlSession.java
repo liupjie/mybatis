@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.binding.BindingException;
+import org.apache.ibatis.builder.xml.XMLStatementBuilder;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.exceptions.TooManyResultsException;
@@ -157,9 +158,15 @@ public class DefaultSqlSession implements SqlSession {
     @Override
     public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
         try {
-            // 获取查询语句
+            /**
+             * 获取查询语句
+             * 设置MappedStatement映射，见{@link XMLStatementBuilder#parseStatementNode()}
+             */
             MappedStatement ms = configuration.getMappedStatement(statement);
-            // 交由执行器进行查询
+            /**
+             * 交由执行器进行查询，由于全局配置cacheEnabled默认是打开的，因此此处的executor通常都是CachingExecutor
+             * 获取executor，见{@link Configuration#newExecutor(org.apache.ibatis.transaction.Transaction, org.apache.ibatis.session.ExecutorType)}
+             */
             return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
