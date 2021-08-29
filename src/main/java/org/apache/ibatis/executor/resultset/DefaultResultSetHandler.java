@@ -181,7 +181,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     /**
      * 处理statement得到的多结果集（也可能是单结果集，这是多结果集的一种简化形式），最终得到结果列表
      *
-     * handleResultSets 方法完成了对多结果集的处理。但是对于每一 个结果集的处理是由handleResultSet子方法实现的
+     * handleResultSets 方法完成了对多结果集的处理。但是对于每一个结果集的处理是由handleResultSet子方法实现的
      * @param stmt Statement语句
      * @return 结果列表
      * @throws SQLException
@@ -335,6 +335,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
                     DefaultResultHandler defaultResultHandler = new DefaultResultHandler(objectFactory);
                     // 处理结果中的记录
                     handleRowValues(rsw, resultMap, defaultResultHandler, rowBounds, null);
+                    // 添加处理后的结果
                     multipleResults.add(defaultResultHandler.getResultList());
                 } else {
                     handleRowValues(rsw, resultMap, resultHandler, rowBounds, null);
@@ -486,7 +487,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
      */
     private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         final ResultLoaderMap lazyLoader = new ResultLoaderMap();
-        // 创建这一行记录对应的对象
+        // 创建这一行记录对应的空对象
         Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
         if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
             // 根据对象得到其MetaObject
@@ -494,10 +495,10 @@ public class DefaultResultSetHandler implements ResultSetHandler {
             boolean foundValues = this.useConstructorMappings;
             // 是否允许自动映射未明示的字段
             if (shouldApplyAutomaticMappings(resultMap, false)) {
-                // 自动映射未明示的字段
+                // 自动映射未明示的字段(resultType)，映射时的TypeHandler通过属性名与set方法参数类型的映射来获取属性的类型，并据此获取对应的TypeHandler
                 foundValues = applyAutomaticMappings(rsw, resultMap, metaObject, columnPrefix) || foundValues;
             }
-            // 按照明示的字段进行重新映射
+            // 按照明示的字段进行重新映射(resultMap)，解析XML时获取TypeHandler
             foundValues = applyPropertyMappings(rsw, resultMap, metaObject, lazyLoader, columnPrefix) || foundValues;
             foundValues = lazyLoader.size() > 0 || foundValues;
             rowValue = foundValues || configuration.isReturnInstanceForEmptyRow() ? rowValue : null;

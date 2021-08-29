@@ -116,10 +116,10 @@ public class MyTest extends BaseDataTest {
         purchase.setId(12);
         // System.out.println(mapper.findXmlPojoByID(purchase));
 
-        // Map<String, Object> param = new HashMap<>();
-        // param.put("id", 7);
-
-        System.out.println(mapper.findCategoryByID(1));
+        Map<String, Object> param = new HashMap<>();
+        param.put("id", 8);
+        param.put("category", 1);
+        System.out.println(mapper.findMapPojoByID(param));
         // PurchaseResultHandler resultHandler = new PurchaseResultHandler();
         // mapper.findAnnoById(resultHandler, null);
         // System.out.println(resultHandler.getPurchases());

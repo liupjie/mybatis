@@ -388,6 +388,7 @@ public abstract class BaseExecutor implements Executor {
         // 向缓存中增加占位符，表示正在查询
         localCache.putObject(key, EXECUTION_PLACEHOLDER);
         try {
+            // 使用具体的Executor执行查询
             list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
         } finally {
             // 删除占位符

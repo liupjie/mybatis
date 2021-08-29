@@ -57,11 +57,16 @@ public class SimpleExecutor extends BaseExecutor {
     public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         Statement stmt = null;
         try {
+            // 获取MappedStatement中的Configuration对象
             Configuration configuration = ms.getConfiguration();
+            // 获取StatementHandler，默认是PreparedStatementHandler，并使用RoutingStatementHandler进行包装
             StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
+            // 获取编译后的Statement对象
             stmt = prepareStatement(handler, ms.getStatementLog());
+            // 执行查询
             return handler.query(stmt, resultHandler);
         } finally {
+            // 关闭Statement资源
             closeStatement(stmt);
         }
     }
@@ -82,8 +87,11 @@ public class SimpleExecutor extends BaseExecutor {
 
     private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
         Statement stmt;
+        // 获取代理的Connection对象
         Connection connection = getConnection(statementLog);
+        // StatementHandler对Statement进行初始化，并设置超时时间及fetchSize属性
         stmt = handler.prepare(connection, transaction.getTimeout());
+        // 将SQL中的?替换为参数值
         handler.parameterize(stmt);
         return stmt;
     }

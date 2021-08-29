@@ -59,7 +59,7 @@ public class Reflector {
     private final Map<String, Invoker> setMethods = new HashMap<>();
     // get方法映射表，键为属性名，值为对应的get方法
     private final Map<String, Invoker> getMethods = new HashMap<>();
-    // set方法输出类型，键为属性名，值为对应的该属性的set方法类型（实际为set方法的第一个参数的类型）
+    // set方法输入类型，键为属性名，值为对应的该属性的set方法类型（实际为set方法的第一个参数的类型）
     private final Map<String, Class<?>> setTypes = new HashMap<>();
     // get方法输出类型，键为属性名，值为对应的该属性的get方法类型（实际为set方法的返回值类型）
     private final Map<String, Class<?>> getTypes = new HashMap<>();

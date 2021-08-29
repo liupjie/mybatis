@@ -61,7 +61,9 @@ public class PreparedStatementHandler extends BaseStatementHandler {
     @Override
     public <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException {
         PreparedStatement ps = (PreparedStatement) statement;
+        // 执行SQL
         ps.execute();
+        // 结果集处理
         return resultSetHandler.handleResultSets(ps);
     }
 
@@ -76,6 +78,7 @@ public class PreparedStatementHandler extends BaseStatementHandler {
     protected Statement instantiateStatement(Connection connection) throws SQLException {
         String sql = boundSql.getSql();
         if (mappedStatement.getKeyGenerator() instanceof Jdbc3KeyGenerator) {
+            // 使用了useGeneratedKeys属性
             String[] keyColumnNames = mappedStatement.getKeyColumns();
             if (keyColumnNames == null) {
                 return connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -83,14 +86,17 @@ public class PreparedStatementHandler extends BaseStatementHandler {
                 return connection.prepareStatement(sql, keyColumnNames);
             }
         } else if (mappedStatement.getResultSetType() == ResultSetType.DEFAULT) {
+            // 未使用useGeneratedKeys属性
             return connection.prepareStatement(sql);
         } else {
+            // 设置结果集只读
             return connection.prepareStatement(sql, mappedStatement.getResultSetType().getValue(), ResultSet.CONCUR_READ_ONLY);
         }
     }
 
     /**
      * PreparedStatementHandler中 parameterize方法最终通过 ParameterHandler接口经过多级中转后调用了 java.sql.PreparedStatement类中的参数赋值方法。
+     *
      * @param statement
      * @throws SQLException
      */

@@ -65,7 +65,7 @@ public class DefaultParameterHandler implements ParameterHandler {
 
     /**
      * 为语句设置参数，
-     * setParameters 方法的实现逻辑也很简单，就是依次取出每个参数的值，然后根据参数类型调用 PreparedStatement中的赋值方法完成赋 值。
+     * setParameters方法的实现逻辑也很简单，就是依次取出每个参数的值，然后根据参数类型调用PreparedStatement中的赋值方法完成赋值。
      * @param ps 语句
      */
     @Override
@@ -101,6 +101,7 @@ public class DefaultParameterHandler implements ParameterHandler {
                         jdbcType = configuration.getJdbcTypeForNull();
                     }
                     try {
+                        // 当存在具体的TypeHandler时，直接调用方法进行赋值，而当TypeHandler为UnknownTypeHandler类型时，则根据传入参数的类型来确定具体的TypeHandler
                         // 此方法最终根据参数类型，调用java.sql.PreparedStatement类中的参数赋值方法，对SQL语句中的参数赋值
                         typeHandler.setParameter(ps, i + 1, value, jdbcType);
                     } catch (TypeException | SQLException e) {

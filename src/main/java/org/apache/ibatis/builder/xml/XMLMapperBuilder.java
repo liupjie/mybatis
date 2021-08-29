@@ -347,6 +347,7 @@ public class XMLMapperBuilder extends BaseBuilder {
                 if ("id".equals(resultChild.getName())) {
                     flags.add(ResultFlag.ID);
                 }
+                // 构建ResultMapping对象（若未指定javaType，则根据属性的set方法参数类型来设置javaType，并获取对应的TypeHandler），并添加到容器中
                 resultMappings.add(buildResultMappingFromContext(resultChild, typeClass, flags));
             }
         }

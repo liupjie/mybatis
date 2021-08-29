@@ -82,12 +82,12 @@
         id, `name`, price, category
     </sql>
 
-<!--    <resultMap id="BaseResultMap" type="org.apache.ibatis.z_run.pojo.Purchase" extends="PurchaseNestedResultMap">-->
-<!--        <id column="id" jdbcType="INTEGER" property="id" />-->
-<!--        <result column="name" jdbcType="VARCHAR" property="name" />-->
-<!--        <result column="price" jdbcType="INTEGER" property="price" />-->
-<!--        <result column="category" jdbcType="INTEGER" property="category" />-->
-<!--    </resultMap>-->
+    <resultMap id="BaseResultMap" type="org.apache.ibatis.z_run.pojo.Purchase">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="price" jdbcType="INTEGER" property="price" />
+        <result column="category" jdbcType="INTEGER" property="category" />
+    </resultMap>
 
 <!--    <insert id="insertXmlPojo" parameterType="org.apache.ibatis.z_run.pojo.Purchase" useGeneratedKeys="true" keyColumn="id" keyProperty="id">-->
 <!--        insert into purchase-->
@@ -180,12 +180,12 @@
 <!--        </trim>-->
 <!--    </insert>-->
 
-<!--    <select id="findMapPojoByID" parameterType="java.util.Map" resultMap="BaseResultMap">-->
-<!--        select-->
-<!--        <include refid="Base_Column_List" />-->
-<!--        from purchase-->
-<!--        where id = #{id,jdbcType=INTEGER}-->
-<!--    </select>-->
+    <select id="findMapPojoByID" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from purchase
+        where   category = #{category} and id = #{id}
+    </select>
 
 <!--    <update id="updateMapPojoByID" parameterType="java.util.Map">-->
 <!--        update purchase-->
