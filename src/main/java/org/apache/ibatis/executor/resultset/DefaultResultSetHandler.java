@@ -182,6 +182,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
      * 处理statement得到的多结果集（也可能是单结果集，这是多结果集的一种简化形式），最终得到结果列表
      *
      * handleResultSets 方法完成了对多结果集的处理。但是对于每一个结果集的处理是由handleResultSet子方法实现的
+     *
      * @param stmt Statement语句
      * @return 结果列表
      * @throws SQLException
@@ -318,8 +319,9 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
     /**
      * 处理单一的结果集
-     * @param rsw ResultSet 的包装
-     * @param resultMap resultMap节点信息
+     *
+     * @param rsw             ResultSet 的包装
+     * @param resultMap       resultMap节点信息
      * @param multipleResults 用来存储处理结果的列表
      * @param parentMapping
      * @throws SQLException
@@ -359,10 +361,11 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     /**
      * 处理单结果集中的属性
      * 在 handleRowValues 方法中，会以当前映射中是否存在嵌套为依据再次进行分类，分别调用 handleRowValuesForNestedResultMap方法和 handleRowValuesForSimpleResultMap方法。
-     * @param rsw 单结果集的包装
-     * @param resultMap 结果映射
+     *
+     * @param rsw           单结果集的包装
+     * @param resultMap     结果映射
      * @param resultHandler 结果处理器
-     * @param rowBounds 翻页限制条件
+     * @param rowBounds     翻页限制条件
      * @param parentMapping 父级结果映射
      * @throws SQLException
      */
@@ -396,10 +399,11 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
     /**
      * 处理非嵌套映射的结果
-     * @param rsw 结果集包装
-     * @param resultMap 结果映射
+     *
+     * @param rsw           结果集包装
+     * @param resultMap     结果映射
      * @param resultHandler 结果处理器
-     * @param rowBounds 翻页限制条件
+     * @param rowBounds     翻页限制条件
      * @param parentMapping 父级结果映射
      * @throws SQLException
      */
@@ -423,11 +427,12 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
     /**
      * 存储当前结果对象
+     *
      * @param resultHandler 结果处理器
      * @param resultContext 结果上下文
-     * @param rowValue 结果对象
+     * @param rowValue      结果对象
      * @param parentMapping 父级结果映射
-     * @param rs 结果集
+     * @param rs            结果集
      * @throws SQLException
      */
     private void storeObject(ResultHandler<?> resultHandler, DefaultResultContext<Object> resultContext, Object rowValue, ResultMapping parentMapping, ResultSet rs) throws SQLException {
@@ -452,7 +457,8 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
     /**
      * 根据翻页限制条件，跳过指定的行
-     * @param rs 结果集
+     *
+     * @param rs        结果集
      * @param rowBounds 翻页限制条件
      * @throws SQLException
      */
@@ -479,13 +485,15 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
     /**
      * 将一条记录转化为一个对象
-     * @param rsw 结果集包装
-     * @param resultMap 结果映射
+     *
+     * @param rsw          结果集包装
+     * @param resultMap    结果映射
      * @param columnPrefix 列前缀
      * @return 转化得到的对象
      * @throws SQLException
      */
     private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
+        // 懒加载
         final ResultLoaderMap lazyLoader = new ResultLoaderMap();
         // 创建这一行记录对应的空对象
         Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
@@ -536,6 +544,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
             if (propertyMapping.isCompositeResult()
                     || (column != null && mappedColumnNames.contains(column.toUpperCase(Locale.ENGLISH)))
                     || propertyMapping.getResultSet() != null) {
+                // 获取映射属性的值
                 Object value = getPropertyMappingValue(rsw.getResultSet(), metaObject, propertyMapping, lazyLoader, columnPrefix);
                 // issue #541 make property optional
                 final String property = propertyMapping.getProperty();
@@ -560,11 +569,14 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     private Object getPropertyMappingValue(ResultSet rs, MetaObject metaResultObject, ResultMapping propertyMapping, ResultLoaderMap lazyLoader, String columnPrefix)
             throws SQLException {
         if (propertyMapping.getNestedQueryId() != null) {
+            // 执行嵌套查询
             return getNestedQueryMappingValue(rs, metaResultObject, propertyMapping, lazyLoader, columnPrefix);
         } else if (propertyMapping.getResultSet() != null) {
+            // 处理resultSet属性（该属性与多结果集查询属性resultSets搭配）
             addPendingChildRelation(rs, metaResultObject, propertyMapping);   // TODO is that OK?
             return DEFERRED;
         } else {
+            // 普通查询
             final TypeHandler<?> typeHandler = propertyMapping.getTypeHandler();
             final String column = prependPrefix(propertyMapping.getColumn(), columnPrefix);
             return typeHandler.getResult(rs, column);
@@ -691,6 +703,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
             final List<ResultMapping> propertyMappings = resultMap.getPropertyResultMappings();
             for (ResultMapping propertyMapping : propertyMappings) {
                 // issue gcode #109 && issue #149
+                // 如果是嵌套查询，并且是懒加载，则创建代理对象
                 if (propertyMapping.getNestedQueryId() != null && propertyMapping.isLazy()) {
                     resultObject = configuration.getProxyFactory().createProxy(resultObject, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
                     break;
@@ -836,14 +849,18 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
     private Object getNestedQueryMappingValue(ResultSet rs, MetaObject metaResultObject, ResultMapping propertyMapping, ResultLoaderMap lazyLoader, String columnPrefix)
             throws SQLException {
+        // 获取嵌套查询的需要的参数
         final String nestedQueryId = propertyMapping.getNestedQueryId();
         final String property = propertyMapping.getProperty();
         final MappedStatement nestedQuery = configuration.getMappedStatement(nestedQueryId);
         final Class<?> nestedQueryParameterType = nestedQuery.getParameterMap().getType();
         final Object nestedQueryParameterObject = prepareParameterForNestedQuery(rs, propertyMapping, nestedQueryParameterType, columnPrefix);
         Object value = null;
+        // 查询参数不为空
         if (nestedQueryParameterObject != null) {
+            // 获取SQL
             final BoundSql nestedBoundSql = nestedQuery.getBoundSql(nestedQueryParameterObject);
+            // 生成CacheKey
             final CacheKey key = executor.createCacheKey(nestedQuery, nestedQueryParameterObject, RowBounds.DEFAULT, nestedBoundSql);
             final Class<?> targetType = propertyMapping.getJavaType();
             if (executor.isCached(nestedQuery, key)) {
@@ -851,10 +868,13 @@ public class DefaultResultSetHandler implements ResultSetHandler {
                 value = DEFERRED;
             } else {
                 final ResultLoader resultLoader = new ResultLoader(configuration, executor, nestedQuery, nestedQueryParameterObject, targetType, key, nestedBoundSql);
+                // 是否懒加载
                 if (propertyMapping.isLazy()) {
+                    // 懒加载，将懒加载的属性放入lazyLoader中
                     lazyLoader.addLoader(property, metaResultObject, resultLoader);
                     value = DEFERRED;
                 } else {
+                    // 非懒加载直接执行查询
                     value = resultLoader.loadResult();
                 }
             }
@@ -914,8 +934,8 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     /**
      * 应用鉴别器
      *
-     * @param rs 数据库查询出的结果集
-     * @param resultMap 当前的resultMap对象
+     * @param rs           数据库查询出的结果集
+     * @param resultMap    当前的resultMap对象
      * @param columnPrefix 属性的父级前缀
      * @return 已经不包含鉴别器的新的ResultMap对象
      * @throws SQLException
@@ -950,9 +970,10 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
     /**
      * 从结果集中取出指定列的值，用于求解鉴别器条件判断的结果
-     * @param rs 数据库查询出的结果集
+     *
+     * @param rs            数据库查询出的结果集
      * @param discriminator 鉴别器
-     * @param columnPrefix 属性的父级前缀
+     * @param columnPrefix  属性的父级前缀
      * @return 计算出鉴别器的value对应的真实结果
      * @throws SQLException
      */

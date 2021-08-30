@@ -246,25 +246,25 @@
 <!--    </select>-->
 
 
-<!--    <resultMap id="CategoryNestedResultMap" type="org.apache.ibatis.z_run.pojo.CategoryVO">-->
-<!--        <id column="id" jdbcType="INTEGER" property="id" />-->
-<!--        <result column="name" jdbcType="VARCHAR" property="name" />-->
-<!--        <collection column="id" property="purchases" select="findPurchaseByCategoryId" fetchType="lazy"/>-->
-<!--    </resultMap>-->
+    <resultMap id="CategoryNestedResultMap" type="org.apache.ibatis.z_run.pojo.CategoryVO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <collection column="id" property="purchases" select="findPurchaseByCategoryId" fetchType="lazy"/>
+    </resultMap>
 
-<!--    <select id="findCategoryById" parameterType="java.lang.Integer" resultMap="CategoryNestedResultMap">-->
-<!--        select-->
-<!--        id,name-->
-<!--        from category-->
-<!--        where id = #{id,jdbcType=INTEGER}-->
-<!--    </select>-->
+    <select id="findCategoryById" parameterType="java.lang.Integer" resultMap="CategoryNestedResultMap">
+        select
+        id,name
+        from category
+        where id = #{id,jdbcType=INTEGER}
+    </select>
 
-<!--    <select id="findPurchaseByCategoryId" parameterType="java.lang.Integer" resultMap="BaseResultMap">-->
-<!--        select-->
-<!--        <include refid="Base_Column_List" />-->
-<!--        from purchase-->
-<!--        where category = #{category,jdbcType=INTEGER}-->
-<!--    </select>-->
+    <select id="findPurchaseByCategoryId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from purchase
+        where category = #{category,jdbcType=INTEGER}
+    </select>
 
 
 

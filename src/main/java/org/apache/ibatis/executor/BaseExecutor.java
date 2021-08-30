@@ -188,6 +188,11 @@ public abstract class BaseExecutor implements Executor {
         }
         List<E> list;
         try {
+            /**
+             * 查询栈，第一次进入时，压栈
+             * 普通查询时，压栈后执行查询，完成后出栈，查询栈为0
+             * 嵌套查询时，第一次进入后压栈，在第一次查询还未完成（查询栈未出栈）时执行嵌套查询，会再次压栈，因此就会出现查询栈大于1的情况
+             */
             queryStack++;
             // 尝试从本地缓存获取结果
             list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
@@ -199,6 +204,7 @@ public abstract class BaseExecutor implements Executor {
                 list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
             }
         } finally {
+            // 查询结束后，出栈
             queryStack--;
         }
         if (queryStack == 0) {
