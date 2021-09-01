@@ -532,10 +532,13 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
     private boolean applyPropertyMappings(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject, ResultLoaderMap lazyLoader, String columnPrefix)
             throws SQLException {
+        // 获取ResultSet中的列名
         final List<String> mappedColumnNames = rsw.getMappedColumnNames(resultMap, columnPrefix);
         boolean foundValues = false;
+        // 获取resultMap映射配置
         final List<ResultMapping> propertyMappings = resultMap.getPropertyResultMappings();
         for (ResultMapping propertyMapping : propertyMappings) {
+            // 获取映射配置中的完整列名
             String column = prependPrefix(propertyMapping.getColumn(), columnPrefix);
             if (propertyMapping.getNestedResultMapId() != null) {
                 // the user added a column attribute to a nested result map, ignore it
@@ -544,13 +547,15 @@ public class DefaultResultSetHandler implements ResultSetHandler {
             if (propertyMapping.isCompositeResult()
                     || (column != null && mappedColumnNames.contains(column.toUpperCase(Locale.ENGLISH)))
                     || propertyMapping.getResultSet() != null) {
-                // 获取映射属性的值
+                // 根据列名获取对应的值
                 Object value = getPropertyMappingValue(rsw.getResultSet(), metaObject, propertyMapping, lazyLoader, columnPrefix);
                 // issue #541 make property optional
+                // 获取映射配置中那个属性名
                 final String property = propertyMapping.getProperty();
                 if (property == null) {
                     continue;
                 } else if (value == DEFERRED) {
+                    // 如果是懒加载，则设置当前查询成功，并且直接进入下一次循环，不再为当前属性赋值
                     foundValues = true;
                     continue;
                 }
@@ -559,6 +564,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
                 }
                 if (value != null || (configuration.isCallSettersOnNulls() && !metaObject.getSetterType(property).isPrimitive())) {
                     // gcode issue #377, call setter on nulls (value is not 'found')
+                    // 为属性设置值
                     metaObject.setValue(property, value);
                 }
             }
@@ -698,6 +704,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         this.useConstructorMappings = false; // reset previous mapping result
         final List<Class<?>> constructorArgTypes = new ArrayList<>();
         final List<Object> constructorArgs = new ArrayList<>();
+        // 创建
         Object resultObject = createResultObject(rsw, resultMap, constructorArgTypes, constructorArgs, columnPrefix);
         if (resultObject != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
             final List<ResultMapping> propertyMappings = resultMap.getPropertyResultMappings();
@@ -870,7 +877,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
                 final ResultLoader resultLoader = new ResultLoader(configuration, executor, nestedQuery, nestedQueryParameterObject, targetType, key, nestedBoundSql);
                 // 是否懒加载
                 if (propertyMapping.isLazy()) {
-                    // 懒加载，将懒加载的属性放入lazyLoader中
+                    // 懒加载，将懒加载的属性放入lazyLoader中，并返回一个Object对象
                     lazyLoader.addLoader(property, metaResultObject, resultLoader);
                     value = DEFERRED;
                 } else {

@@ -65,7 +65,7 @@
             SLF4J | LOG4J | LOG4J2 | JDK_LOGGING | COMMONS_LOGGING | STDOUT_LOGGING | NO_LOGGING。-->
         <setting name="logImpl" value="LOG4J"/>
         <!--指定 Mybatis 创建具有延迟加载能力的对象所用到的代理工具。CGLIB | JAVASSIST-->
-        <setting name="proxyFactory" value="JAVASSIST"/>
+        <setting name="proxyFactory" value="CGLIB"/>
         <!--指定VFS的实现
         <setting name="vfsImpl" value="vfs"/>-->
         <!--允许使用方法签名中的名称作为语句参数名称。 为了使用该特性，你的工程必须采用Java 8编译，并且加上-parameters选项。
