@@ -3,6 +3,7 @@ package org.apache.ibatis.z_run;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.ibatis.BaseDataTest;
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.domain.blog.mappers.BlogMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.RowBounds;
@@ -180,10 +181,20 @@ public class MyTest extends BaseDataTest {
         sqlSession.commit();
         sqlSession.close();
         // 第二个SqlSession下的查询
-        System.out.println("============第二个SqlSessionFactory下的第一次查询============");
+        System.out.println("============第二个SqlSession下的第一次查询============");
         sqlSession = getSqlSession(sqlSessionFactory);
         mapper = sqlSession.getMapper(PurchaseMapper.class);
         System.out.println(mapper.findByID(2));
+        for (Cache cache : sqlSessionFactory.getConfiguration().getCaches()) {
+            System.out.println(cache);
+        }
+        SqlSessionFactory sqlSessionFactory1 = getSqlSessionFactory();
+        PurchaseMapper mapper1 = getSqlSession(sqlSessionFactory1).getMapper(PurchaseMapper.class);
+        System.out.println(mapper1.findByID(2));
+        for (Cache cache : sqlSessionFactory1.getConfiguration().getCaches()) {
+            System.out.println(cache);
+        }
+
     }
 
     @Test

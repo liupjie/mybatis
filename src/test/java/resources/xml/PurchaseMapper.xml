@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.apache.ibatis.z_run.mapper.PurchaseMapper">
     <!-- 开启二级缓存-->
-<!--    <cache type="org.apache.ibatis.cache.impl.PerpetualCache"
+    <cache type="org.apache.ibatis.z_run.util.CaffeineCache"
            size="1024"
            eviction="LRU"
            flushInterval="120000"
-           readOnly="true"/>-->
+           readOnly="true"/>
 
 
     <select id="findByCondition" parameterType="org.apache.ibatis.z_run.pojo.QueryCondition" resultType="org.apache.ibatis.z_run.pojo.Purchase">
@@ -222,12 +222,12 @@
 <!--           flushInterval="120000"-->
 <!--           readOnly="true"/>-->
 
-<!--    <select id="findByID" parameterType="java.lang.Integer" resultMap="BaseResultMap" flushCache="false">-->
-<!--        select-->
-<!--        <include refid="Base_Column_List" />-->
-<!--        from purchase-->
-<!--        where id = #{id,jdbcType=INTEGER}-->
-<!--    </select>-->
+    <select id="findByID" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from purchase
+        where id = #{id,jdbcType=INTEGER}
+    </select>
 
 
 
