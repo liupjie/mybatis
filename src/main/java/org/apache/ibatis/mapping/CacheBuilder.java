@@ -238,6 +238,7 @@ public class CacheBuilder {
     private Cache newBaseCacheInstance(Class<? extends Cache> cacheClass, String id) {
         Constructor<? extends Cache> cacheConstructor = getBaseCacheConstructor(cacheClass);
         try {
+            // 通过有参构造函数创建缓存类实例
             return cacheConstructor.newInstance(id);
         } catch (Exception e) {
             throw new CacheException("Could not instantiate cache implementation (" + cacheClass + "). Cause: " + e, e);
@@ -246,6 +247,7 @@ public class CacheBuilder {
 
     private Constructor<? extends Cache> getBaseCacheConstructor(Class<? extends Cache> cacheClass) {
         try {
+            // 获取缓存实现类的有参构造函数
             return cacheClass.getConstructor(String.class);
         } catch (Exception e) {
             throw new CacheException("Invalid base cache implementation (" + cacheClass + ").  "
