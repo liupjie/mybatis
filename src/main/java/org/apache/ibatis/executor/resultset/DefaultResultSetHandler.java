@@ -412,7 +412,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         DefaultResultContext<Object> resultContext = new DefaultResultContext<>();
         // 当前要处理的结果集
         ResultSet resultSet = rsw.getResultSet();
-        // 根据翻页配置，跳过指定的行
+        // 根据RowBounds翻页配置，跳过指定的行
         skipRows(resultSet, rowBounds);
         // 持续处理下一条结果，判断条件为；还有结果需要处理 && 结果集没有关闭 && 还有下一条结果
         while (shouldProcessMoreRows(resultContext, rowBounds) && !resultSet.isClosed() && resultSet.next()) {

@@ -79,9 +79,9 @@
     <typeAliases>
         <package name="org.apache.ibatis.z_run.pojo"/>
     </typeAliases>
-<!--    <plugins>-->
-<!--        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>-->
-<!--    </plugins>-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
     <!--环境配置-->
     <environments default="development">
         <environment id="development">
